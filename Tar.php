@@ -735,9 +735,9 @@ class Archive_Tar extends PEAR
     $v_result=true;
     $v_nb = 0;
     $v_extract_all = true;
-    $v_listing = false;
+    $v_listing = false;        
 
-    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../")))
+    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../") && (substr(PHP_OS, 0, 3) != 'WIN')))
       $p_path = "./".$p_path;
 
     // ----- Look for path to remove format (should end by /)
@@ -807,11 +807,10 @@ class Archive_Tar extends PEAR
 
       // ----- Look if this file need to be extracted
       if (($v_extract_file) && (!$v_listing))
-      {
+      {              
         if (($p_remove_path != "")
             && (substr($v_header[filename], 0, $p_remove_path_size) == $p_remove_path))
           $v_header[filename] = substr($v_header[filename], $p_remove_path_size);
-
         if (($p_path != "./") && ($p_path != "/")) {
           while (substr($p_path, -1) == "/")
             $p_path = substr($p_path, 0, strlen($p_path)-1);
@@ -821,7 +820,6 @@ class Archive_Tar extends PEAR
           else
             $v_header[filename] = $p_path."/".$v_header[filename];
         }
-
         if (file_exists($v_header[filename])) {
           if ((@is_dir($v_header[filename])) && ($v_header[typeflag] == "")) {
             $this->_error("File '$v_header[filename]' already exists as a directory");
