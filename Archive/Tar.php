@@ -497,6 +497,7 @@ class Archive_Tar extends PEAR
     * This method set specific attributes of the archive. It uses a variable
     * list of parameters, in the format attribute code + attribute values :
     * $arch->setAttribute(ARCHIVE_TAR_ATT_SEPARATOR, ',');
+    * @param mixed $argv            variable list of attributes and values
     * @return                       true on success, false on error.
     * @access public
     */
