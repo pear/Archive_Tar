@@ -22,7 +22,7 @@ require_once 'PEAR.php';
 
 /**
 * Creates a (compressed) Tar archive
-* 
+*
 * @author   Vincent Blavet <vincent@blavet.net>
 * @version  $Revision$
 * @package  Archive
@@ -33,7 +33,7 @@ class Archive_Tar extends PEAR
     * @var string Name of the Tar
     */
     var $_tarname;
-    
+
     /**
     * @var boolean if true, the Tar file will be gzipped
     */
@@ -48,10 +48,10 @@ class Archive_Tar extends PEAR
     /**
     * Archive_Tar Class constructor. This flavour of the constructor only
     * declare a new Archive_Tar object, identifying it by the name of the
-    * tar file. 
+    * tar file.
     * If the compress argument is set the tar will be read or created as a
     * gzip compressed TAR file.
-    * 
+    *
     * @param    string  $p_tarname  The name of the tar archive to create
     * @param    boolean $p_compress if true, the archive will be gezip(ped)
     * @access public
@@ -64,41 +64,6 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
-/*
-    // {{{ constructor
-    /**
-    * Archive_Tar Class constructor. This flavour of the constructor
-    * creates a Tar archive containing the files/directory indicated in
-    * $p_filelist. The archive can be compressed by gzip by using the
-    * $p_compress option. 
-    * If the file already exists and is writable, it is replaced by the
-    * new tar. It is a create and not an add. If the file exists and is
-    * read-only or is a directory it is not replaced. The method does not
-    * return error code (constructor) a PEAR error text is set (but no use
-    * ...). 
-    * For better error handling it is recommended to create the object,
-    * initialise PEAR error handling and call the create() method. 
-    *
-    * @param string     $p_tarname  A valid filename for the tar archive file.
-    * @param array      $p_filelist A list of files and/or directories. (see discussion in
-    *                               add() method about the list structure). 
-    * @param boolean    $p_compress true/false. Indicate if the archive need to be
-    *                               compressed or not. 
-    * @access public
-    * @see add()
-    */
-    function Archive_Tar($p_tarname, $p_filelist, $p_compress = false)
-    {
-        $this->PEAR();
-        $this->_tarname = $p_tarname;
-        $this->_compress = $p_compress;
-
-        if (!$this->create($p_filelist))
-          return 0;
-    }
-    // }}}
-*/
-
     // {{{ destructor
     function _Archive_Tar()
     {
@@ -110,19 +75,19 @@ class Archive_Tar extends PEAR
     // {{{ create()
     /**
     * This method creates the archive file and add the files / directories
-    * that are listed in $p_filelist. 
+    * that are listed in $p_filelist.
     * If the file already exists and is writable, it is replaced by the
     * new tar. It is a create and not an add. If the file exists and is
     * read-only or is a directory it is not replaced. The method return
-    * false and a PEAR error text. 
+    * false and a PEAR error text.
     * The $p_filelist parameter can be an array of string, each string
     * representing a filename or a directory name with their path if
     * needed. It can also be a single string with names separated by a
-    * single blank. 
+    * single blank.
     * See also createModify() method for more details.
     *
     * @param array  $p_filelist An array of filenames and directory names, or a single
-    *                           string with names separated by a single blank space. 
+    *                           string with names separated by a single blank space.
     * @return                   true on success, false on error.
     * @see createModify()
     * @access public
@@ -167,34 +132,34 @@ class Archive_Tar extends PEAR
     // {{{ createModify()
     /**
     * This method creates the archive file and add the files / directories
-    * that are listed in $p_filelist. 
+    * that are listed in $p_filelist.
     * If the file already exists and is writable, it is replaced by the
     * new tar. It is a create and not an add. If the file exists and is
     * read-only or is a directory it is not replaced. The method return
-    * false and a PEAR error text. 
+    * false and a PEAR error text.
     * The $p_filelist parameter can be an array of string, each string
     * representing a filename or a directory name with their path if
     * needed. It can also be a single string with names separated by a
-    * single blank. 
+    * single blank.
     * The path indicated in $p_remove_dir will be removed from the
     * memorized path of each file / directory listed when this path
-    * exists. By default nothing is removed (empty path "") 
+    * exists. By default nothing is removed (empty path "")
     * The path indicated in $p_add_dir will be added at the beginning of
     * the memorized path of each file / directory listed. However it can
     * be set to empty "". The adding of a path is done after the removing
-    * of path. 
+    * of path.
     * The path add/remove ability enables the user to prepare an archive
-    * for extraction in a different path than the origin files are. 
+    * for extraction in a different path than the origin files are.
     * See also addModify() method for file adding properties.
     *
     * @param array  $p_filelist     An array of filenames and directory names, or a single
     *                               string with names separated by a single blank space.
     * @param string $p_add_dir      A string which contains a path to be added to the
-    *                               memorized path of each element in the list. 
+    *                               memorized path of each element in the list.
     * @param string $p_remove_dir   A string which contains a path to be removed from
     *                               the memorized path of each element in the list, when
     *                               relevant.
-    * @return boolean               true on success, false on error.        
+    * @return boolean               true on success, false on error.
     * @access public
     * @see addModify()
     */
@@ -237,37 +202,37 @@ class Archive_Tar extends PEAR
     * The $p_filelist parameter can be an array of string, each string
     * representing a filename or a directory name with their path if
     * needed. It can also be a single string with names separated by a
-    * single blank. 
+    * single blank.
     * The path indicated in $p_remove_dir will be removed from the
     * memorized path of each file / directory listed when this path
-    * exists. By default nothing is removed (empty path "") 
+    * exists. By default nothing is removed (empty path "")
     * The path indicated in $p_add_dir will be added at the beginning of
     * the memorized path of each file / directory listed. However it can
     * be set to empty "". The adding of a path is done after the removing
-    * of path. 
+    * of path.
     * The path add/remove ability enables the user to prepare an archive
-    * for extraction in a different path than the origin files are. 
+    * for extraction in a different path than the origin files are.
     * If a file/dir is already in the archive it will only be added at the
     * end of the archive. There is no update of the existing archived
     * file/dir. However while extracting the archive, the last file will
     * replace the first one. This results in a none optimization of the
-    * archive size. 
+    * archive size.
     * If a file/dir does not exist the file/dir is ignored. However an
-    * error text is send to PEAR error. 
+    * error text is send to PEAR error.
     * If a file/dir is not readable the file/dir is ignored. However an
-    * error text is send to PEAR error. 
+    * error text is send to PEAR error.
     * If the resulting filename/dirname (after the add/remove option or
     * not) string is greater than 99 char, the file/dir is
-    * ignored. However an error text is send to PEAR error. 
+    * ignored. However an error text is send to PEAR error.
     *
     * @param array      $p_filelist     An array of filenames and directory names, or a single
-    *                                   string with names separated by a single blank space. 
+    *                                   string with names separated by a single blank space.
     * @param string     $p_add_dir      A string which contains a path to be added to the
-    *                                   memorized path of each element in the list. 
+    *                                   memorized path of each element in the list.
     * @param string     $p_remove_dir   A string which contains a path to be removed from
     *                                   the memorized path of each element in the list, when
     *                                   relevant.
-    * @return                           true on success, false on error.    
+    * @return                           true on success, false on error.
     * @access public
     */
     function addModify($p_filelist, $p_add_dir, $p_remove_dir="")
@@ -298,31 +263,31 @@ class Archive_Tar extends PEAR
     * This method extract all the content of the archive in the directory
     * indicated by $p_path. When relevant the memorized path of the
     * files/dir can be modified by removing the $p_remove_path path at the
-    * beginning of the file/dir path. 
+    * beginning of the file/dir path.
     * While extracting a file, if the directory path does not exists it is
-    * created. 
+    * created.
     * While extracting a file, if the file already exists it is replaced
-    * without looking for last modification date. 
+    * without looking for last modification date.
     * While extracting a file, if the file already exists and is write
-    * protected, the extraction is aborted. 
+    * protected, the extraction is aborted.
     * While extracting a file, if a directory with the same name already
-    * exists, the extraction is aborted. 
+    * exists, the extraction is aborted.
     * While extracting a directory, if a file with the same name already
-    * exists, the extraction is aborted. 
+    * exists, the extraction is aborted.
     * While extracting a file/directory if the destination directory exist
     * and is write protected, or does not exist but can not be created,
-    * the extraction is aborted. 
+    * the extraction is aborted.
     * If after extraction an extracted file does not show the correct
-    * stored file size, the extraction is aborted. 
+    * stored file size, the extraction is aborted.
     * When the extraction is aborted, a PEAR error text is set and false
     * is returned. However the result can be a partial extraction that may
-    * need to be manually cleaned. 
+    * need to be manually cleaned.
     *
     * @param string $p_path         The path of the directory where the files/dir need to by
-    *                               extracted. 
+    *                               extracted.
     * @param string $p_remove_path  Part of the memorized path that can be removed if
-    *                               present at the beginning of the file/dir path. 
-    * @return boolean               true on success, false on error.    
+    *                               present at the beginning of the file/dir path.
+    * @return boolean               true on success, false on error.
     * @access public
     * @see extractList()
     */
@@ -344,16 +309,16 @@ class Archive_Tar extends PEAR
     /**
     * This method extract from the archive only the files indicated in the
     * $p_filelist. These files are extracted in the current directory or
-    * in the directory indicated by the optional $p_path parameter. 
+    * in the directory indicated by the optional $p_path parameter.
     * If indicated the $p_remove_path can be used in the same way as it is
-    * used in extractModify() method. 
+    * used in extractModify() method.
     * @param array  $p_filelist     An array of filenames and directory names, or a single
-    *                               string with names separated by a single blank space. 
+    *                               string with names separated by a single blank space.
     * @param string $p_path         The path of the directory where the files/dir need to by
-    *                               extracted. 
+    *                               extracted.
     * @param string $p_remove_path  Part of the memorized path that can be removed if
-    *                               present at the beginning of the file/dir path. 
-    * @return                       true on success, false on error.        
+    *                               present at the beginning of the file/dir path.
+    * @return                       true on success, false on error.
     * @access public
     * @see extractModify()
     */
