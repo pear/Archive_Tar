@@ -384,6 +384,27 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
+    // {{{ extractInString()
+    /**
+    * This method extract from the archive one file identified by $p_filename.
+    * The return value is a string with the file content, or NULL on error.
+    * @param string $p_filename     The path of the file to extract in a string.
+    * @return                       a string with the file content or NULL.
+    * @access public
+    */
+    function extractInString($p_filename)
+    {
+        if ($this->_openRead()) {
+            $v_result = $this->_extractInString($p_filename);
+            $this->_close();
+        } else {
+            $v_result = NULL;
+        }
+
+        return $v_result;
+    }
+    // }}}
+
     // {{{ extractList()
     /**
     * This method extract from the archive only the files indicated in the
@@ -992,6 +1013,56 @@ class Archive_Tar extends PEAR
       $v_header['filename'] = $v_filename;
 
       return true;
+    }
+    // }}}
+
+    // {{{ _extractInString()
+    /**
+    * This method extract from the archive one file identified by $p_filename.
+    * The return value is a string with the file content, or NULL on error.
+    * @param string $p_filename     The path of the file to extract in a string.
+    * @return                       a string with the file content or NULL.
+    * @access private
+    */
+    function _extractInString($p_filename)
+    {
+        $v_result_str = "";
+
+        While (strlen($v_binary_data = $this->_readBlock()) != 0)
+        {
+          if (!$this->_readHeader($v_binary_data, $v_header))
+            return NULL;
+
+          if ($v_header['filename'] == '')
+            continue;
+
+          // ----- Look for long filename
+          if ($v_header['typeflag'] == 'L') {
+            if (!$this->_readLongHeader($v_header))
+              return NULL;
+          }
+
+          if ($v_header['filename'] == $p_filename) {
+              if ($v_header['typeflag'] == "5") {
+                  $this->_error('Unable to extract in string a directory entry {'.$v_header['filename'].'}');
+                  return NULL;
+              } else {
+                  $n = floor($v_header['size']/512);
+                  for ($i=0; $i<$n; $i++) {
+                      $v_result_str .= $this->_readBlock();
+                  }
+                  if (($v_header['size'] % 512) != 0) {
+                      $v_content = $this->_readBlock();
+                      $v_result_str .= substr($v_content, 0, ($v_header['size'] % 512));
+                  }
+                  return $v_result_str;
+              }
+          } else {
+              $this->_jumpBlock(ceil(($v_header['size']/512)));
+          }
+        }
+
+        return NULL;
     }
     // }}}
 
