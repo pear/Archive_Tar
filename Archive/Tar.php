@@ -393,7 +393,7 @@ class Archive_Tar extends PEAR
         }
 
         if ($v_result = $this->_openRead()) {
-            $v_result = $this->_extractList($p_path, $v_list_detail, "complete", $v_list, $p_remove_path);
+            $v_result = $this->_extractList($p_path, $v_list_detail, "partial", $v_list, $p_remove_path);
             $this->_close();
         }
 
@@ -598,7 +598,7 @@ class Archive_Tar extends PEAR
             }
             $p_hitem = readdir($p_hdir); // '.' directory
             $p_hitem = readdir($p_hdir); // '..' directory
-            while ($p_hitem = readdir($p_hdir)) {
+            while (false !== ($p_hitem = readdir($p_hdir))) {
                 if ($v_filename != ".")
                     $p_temp_list[0] = $v_filename.'/'.$p_hitem;
                 else
@@ -655,7 +655,6 @@ class Archive_Tar extends PEAR
 
       if (strlen($v_stored_filename) > 99) {
           $this->_warning("Stored file name is too long (max. 99) : '$v_stored_filename'");
-          fclose($v_file);
           return true;
       }
 
