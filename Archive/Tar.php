@@ -13,7 +13,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
-// | Author: Vincent Blavet <vincent@blavet.net>                          |
+// | Author: Vincent Blavet <vincent@phpconcept.net>                          |
 // +----------------------------------------------------------------------+
 //
 // $Id$
@@ -26,7 +26,7 @@ define ('ARCHIVE_TAR_ATT_SEPARATOR', 90001);
 /**
 * Creates a (compressed) Tar archive
 *
-* @author   Vincent Blavet <vincent@blavet.net>
+* @author   Vincent Blavet <vincent@phpconcept.net>
 * @version  $Revision$
 * @package  Archive
 */
@@ -580,7 +580,7 @@ class Archive_Tar extends PEAR
     function _openWrite()
     {
         if ($this->_compress_type == 'gz')
-            $this->_file = @gzopen($this->_tarname, "wb");
+            $this->_file = @gzopen($this->_tarname, "wb9");
         else if ($this->_compress_type == 'bz2')
             $this->_file = @bzopen($this->_tarname, "wb");
         else if ($this->_compress_type == 'none')
@@ -1349,8 +1349,9 @@ class Archive_Tar extends PEAR
       if (!$this->_readHeader($v_binary_data, $v_header))
         return false;
 
-      if ($v_header['filename'] == '')
+      if ($v_header['filename'] == '') {
         continue;
+      }
 
       // ----- Look for long filename
       if ($v_header['typeflag'] == 'L') {
