@@ -737,8 +737,9 @@ class Archive_Tar extends PEAR
     $v_extract_all = true;
     $v_listing = false;        
 
-    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../") && (substr($p_path, 1, 3) != ':\'))))
+    if ($p_path == "" || (substr($p_path, 0, 1) != "/" && substr($p_path, 0, 3) != "../" && substr($p_path, 1, 3) != ":\\")) {
       $p_path = "./".$p_path;
+    }
 
     // ----- Look for path to remove format (should end by /)
     if (($p_remove_path != "") && (substr($p_remove_path, -1) != '/'))
@@ -822,15 +823,15 @@ class Archive_Tar extends PEAR
         }
         if (file_exists($v_header[filename])) {
           if ((@is_dir($v_header[filename])) && ($v_header[typeflag] == "")) {
-            $this->_error("File '$v_header[filename]' already exists as a directory");
+            $this->_error("File $v_header[filename] already exists as a directory");
             return false;
           }
           if ((is_file($v_header[filename])) && ($v_header[typeflag] == "5")) {
-            $this->_error("Directory '$v_header[filename]' already exists as a file");
+            $this->_error("Directory $v_header[filename] already exists as a file");
             return false;
           }
           if (!is_writeable($v_header[filename])) {
-            $this->_error("File '$v_header[filename]' already exists and is write protected");
+            $this->_error("File $v_header[filename] already exists and is write protected");
             return false;
           }
           if (filemtime($v_header[filename]) > $v_header[mtime]) {
@@ -840,7 +841,7 @@ class Archive_Tar extends PEAR
 
         // ----- Check the directory availability and create it if necessary
         elseif (($v_result = $this->_dirCheck(($v_header[typeflag] == "5"?$v_header[filename]:dirname($v_header[filename])))) != 1) {
-            $this->_error("Unable to create path for '$v_header[filename]'");
+            $this->_error("Unable to create path for $v_header[filename]");
             return false;
         }
 
@@ -848,13 +849,13 @@ class Archive_Tar extends PEAR
           if ($v_header[typeflag] == "5") {
             if (!@file_exists($v_header[filename])) {
                 if (!@mkdir($v_header[filename], 0777)) {
-                    $this->_error("Unable to create directory '".$v_header[filename]."'");
+                    $this->_error("Unable to create directory $v_header[filename]");
                     return false;
                 }
             }
           } else {
               if (($v_dest_file = @fopen($v_header[filename], "wb")) == 0) {
-                  $this->_error("Error while opening '$v_header[filename]' in write binary mode");
+                  $this->_error("Error while opening $v_header[filename] in write binary mode");
                   return false;
               } else {
                   $n = floor($v_header[size]/512);
@@ -883,7 +884,7 @@ class Archive_Tar extends PEAR
 
           // ----- Check the file size
           if (filesize($v_header[filename]) != $v_header[size]) {
-              $this->_error("Extracted file '$v_header[filename]' does not have the correct file size '".filesize($v_filename)."' ('$v_header[size]' expected). Archive may be corrupted.");
+              $this->_error("Extracted file $v_header[filename] does not have the correct file size '".filesize($v_filename)."' ($v_header[size] expected). Archive may be corrupted.");
               return false;
           }
           }
