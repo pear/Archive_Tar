@@ -819,8 +819,10 @@ class Archive_Tar extends PEAR
       if (sizeof($p_list) == 0)
           return true;
 
-      for ($j=0; ($j<count($p_list)) && ($v_result); $j++) {
-        $v_filename = $p_list[$j];
+      foreach ($p_list as $v_filename) {
+          if (!$v_result) {
+              break;
+          }
 
         // ----- Skip the current tar name
         if ($v_filename == $this->_tarname)
