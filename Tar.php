@@ -428,7 +428,7 @@ class Archive_Tar extends PEAR
     // {{{ _close()
     function _close()
     {
-        if ($this->_file) {
+        if (isset($this->_file)) {
             if ($this->_compress)
                 @gzclose($this->_file);
             else
@@ -671,12 +671,12 @@ class Archive_Tar extends PEAR
     function _readHeader($v_binary_data, &$v_header)
     {
         if (strlen($v_binary_data)==0) {
-            $v_header[filename] = "";
+            $v_header['filename'] = "";
             return true;
         }
 
         if (strlen($v_binary_data) != 512) {
-            $v_header[filename] = "";
+            $v_header['filename'] = "";
             $this->_error("Invalid block size : ".strlen($v_binary_data));
             return false;
         }
@@ -696,12 +696,12 @@ class Archive_Tar extends PEAR
         $v_data = unpack("a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1typeflag/a100link/a6magic/a2version/a32uname/a32gname/a8devmajor/a8devminor", $v_binary_data);
 
         // ----- Extract the checksum
-        $v_header[checksum] = OctDec(trim($v_data[checksum]));
-        if ($v_header[checksum] != $v_checksum) {
-            $v_header[filename] = "";
+        $v_header['checksum'] = OctDec(trim($v_data['checksum']));
+        if ($v_header['checksum'] != $v_checksum) {
+            $v_header['filename'] = "";
 
             // ----- Look for last block (empty block)
-            if (($v_checksum == 256) && ($v_header[checksum] == 0))
+            if (($v_checksum == 256) && ($v_header['checksum'] == 0))
                 return true;
 
             $this->_error("Invalid checksum : $v_checksum calculated, ".$v_header[checksum]." expected");
@@ -709,14 +709,14 @@ class Archive_Tar extends PEAR
         }
 
         // ----- Extract the properties
-        $v_header[filename] = trim($v_data[filename]);
-        $v_header[mode] = OctDec(trim($v_data[mode]));
-        $v_header[uid] = OctDec(trim($v_data[uid]));
-        $v_header[gid] = OctDec(trim($v_data[gid]));
-        $v_header[size] = OctDec(trim($v_data[size]));
-        $v_header[mtime] = OctDec(trim($v_data[mtime]));
-        if (($v_header[typeflag] = $v_data[typeflag]) == "5") {
-          $v_header[size] = 0;
+        $v_header['filename'] = trim($v_data['filename']);
+        $v_header['mode'] = OctDec(trim($v_data['mode']));
+        $v_header['uid'] = OctDec(trim($v_data['uid']));
+        $v_header['gid'] = OctDec(trim($v_data['gid']));
+        $v_header['size'] = OctDec(trim($v_data['size']));
+        $v_header['mtime'] = OctDec(trim($v_data['mtime']));
+        if (($v_header['typeflag'] = $v_data['typeflag']) == "5") {
+          $v_header['size'] = 0;
         }
         /* ----- All these fields are removed form the header because they do not carry interesting info
         $v_header[link] = trim($v_data[link]);
@@ -782,7 +782,7 @@ class Archive_Tar extends PEAR
       if (!$this->_readHeader($v_binary_data, $v_header))
         return false;
 
-      if ($v_header[filename] == "")
+      if ($v_header['filename'] == "")
         continue;
 
       if ((!$v_extract_all) && (is_array($p_file_list))) {
@@ -793,7 +793,7 @@ class Archive_Tar extends PEAR
           // ----- Look if it is a directory
           if (substr($p_file_list[$i], -1) == "/") {
             // ----- Look if the directory is in the filename path
-            if ((strlen($v_header[filename]) > strlen($p_file_list[$i])) && (substr($v_header[filename], 0, strlen($p_file_list[$i])) == $p_file_list[$i])) {
+            if ((strlen($v_header['filename']) > strlen($p_file_list[$i])) && (substr($v_header['filename'], 0, strlen($p_file_list[$i])) == $p_file_list[$i])) {
               $v_extract_file = TRUE;
               break;
             }
@@ -819,49 +819,49 @@ class Archive_Tar extends PEAR
           while (substr($p_path, -1) == "/")
             $p_path = substr($p_path, 0, strlen($p_path)-1);
 
-          if (substr($v_header[filename], 0, 1) == "/")
-              $v_header[filename] = $p_path.$v_header[filename];
+          if (substr($v_header['filename'], 0, 1) == "/")
+              $v_header['filename'] = $p_path.$v_header['filename'];
           else
-            $v_header[filename] = $p_path."/".$v_header[filename];
+            $v_header['filename'] = $p_path."/".$v_header['filename'];
         }
-        if (file_exists($v_header[filename])) {
-          if ((@is_dir($v_header[filename])) && ($v_header[typeflag] == "")) {
+        if (file_exists($v_header['filename'])) {
+          if ((@is_dir($v_header['filename'])) && ($v_header['typeflag'] == "")) {
             $this->_error("File $v_header[filename] already exists as a directory");
             return false;
           }
-          if ((is_file($v_header[filename])) && ($v_header[typeflag] == "5")) {
+          if ((is_file($v_header['filename'])) && ($v_header['typeflag'] == "5")) {
             $this->_error("Directory $v_header[filename] already exists as a file");
             return false;
           }
-          if (!is_writeable($v_header[filename])) {
+          if (!is_writeable($v_header['filename'])) {
             $this->_error("File $v_header[filename] already exists and is write protected");
             return false;
           }
-          if (filemtime($v_header[filename]) > $v_header[mtime]) {
+          if (filemtime($v_header['filename']) > $v_header['mtime']) {
             // To be completed : An error or silent no replace ?
           }
         }
 
         // ----- Check the directory availability and create it if necessary
-        elseif (($v_result = $this->_dirCheck(($v_header[typeflag] == "5"?$v_header[filename]:dirname($v_header[filename])))) != 1) {
+        elseif (($v_result = $this->_dirCheck(($v_header['typeflag'] == "5"?$v_header['filename']:dirname($v_header['filename'])))) != 1) {
             $this->_error("Unable to create path for $v_header[filename]");
             return false;
         }
 
         if ($v_extract_file) {
-          if ($v_header[typeflag] == "5") {
-            if (!@file_exists($v_header[filename])) {
-                if (!@mkdir($v_header[filename], 0777)) {
-                    $this->_error("Unable to create directory $v_header[filename]");
+          if ($v_header['typeflag'] == "5") {
+            if (!@file_exists($v_header['filename'])) {
+                if (!@mkdir($v_header['filename'], 0777)) {
+                    $this->_error("Unable to create directory {$v_header['filename']}");
                     return false;
                 }
             }
           } else {
-              if (($v_dest_file = @fopen($v_header[filename], "wb")) == 0) {
-                  $this->_error("Error while opening $v_header[filename] in write binary mode");
+              if (($v_dest_file = @fopen($v_header['filename'], "wb")) == 0) {
+                  $this->_error("Error while opening {$v_header['filename']} in write binary mode");
                   return false;
               } else {
-                  $n = floor($v_header[size]/512);
+                  $n = floor($v_header['size']/512);
                   for ($i=0; $i<$n; $i++) {
                       if ($this->_compress)
                           $v_content = @gzread($this->_file, 512);
@@ -869,25 +869,25 @@ class Archive_Tar extends PEAR
                           $v_content = @fread($this->_file, 512);
                       fwrite($v_dest_file, $v_content, 512);
                   }
-            if (($v_header[size] % 512) != 0) {
+            if (($v_header['size'] % 512) != 0) {
               if ($this->_compress)
                 $v_content = @gzread($this->_file, 512);
               else
                 $v_content = @fread($this->_file, 512);
-              fwrite($v_dest_file, $v_content, ($v_header[size] % 512));
+              fwrite($v_dest_file, $v_content, ($v_header['size'] % 512));
             }
 
             @fclose($v_dest_file);
 
             // ----- Change the file mode, mtime
-            @touch($v_header[filename], $v_header[mtime]);
+            @touch($v_header['filename'], $v_header['mtime']);
             // To be completed
             //chmod($v_header[filename], DecOct($v_header[mode]));
           }
 
           // ----- Check the file size
           clearstatcache();
-          if (filesize($v_header[filename]) != $v_header[size]) {
+          if (filesize($v_header['filename']) != $v_header['size']) {
               $this->_error("Extracted file $v_header[filename] does not have the correct file size '".filesize($v_filename)."' ($v_header[size] expected). Archive may be corrupted.");
               return false;
           }
@@ -914,9 +914,9 @@ class Archive_Tar extends PEAR
 
       if ($v_listing || $v_extract_file || $v_extraction_stopped) {
         // ----- Log extracted files
-        if (($v_file_dir = dirname($v_header[filename])) == $v_header[filename])
+        if (($v_file_dir = dirname($v_header['filename'])) == $v_header['filename'])
           $v_file_dir = "";
-        if ((substr($v_header[filename], 0, 1) == "/") && ($v_file_dir == ""))
+        if ((substr($v_header['filename'], 0, 1) == "/") && ($v_file_dir == ""))
           $v_file_dir = "/";
 
         $p_list_detail[$v_nb++] = $v_header;
