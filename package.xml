@@ -24,12 +24,12 @@ loaded.
     </maintainer>
   </maintainers>
   <release>
-    <version>0.9</version>
-    <date>2002-05-27</date>
+    <version>0.10-b1</version>
+    <date>2002-01-08</date>
     <notes>
-      * Auto-detect gzip'ed files
+      Add support for long filenames (greater than 99 characters)
     </notes>
-    <state>stable</state>
+    <state>beta</state>
     <filelist>
       <dir name="Archive">
         <file role="php" name="Tar.php"/>
@@ -38,6 +38,12 @@ loaded.
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>0.9</version>
+      <date>2002-05-27</date>
+      <notes>Auto-detect gzip'ed files</notes>
+      <state>stable</state>
+    </release>
     <release>
       <version>0.4</version>
       <date>2002-05-20</date>
