@@ -24,12 +24,10 @@ loaded.
     </maintainer>
   </maintainers>
   <release>
-    <version>0.10-b1</version>
-    <date>2002-01-08</date>
-    <notes>
-      Add support for long filenames (greater than 99 characters)
-    </notes>
-    <state>beta</state>
+    <version>1.0</version>
+    <date>2003-01-24</date>
+    <notes>Change status to stable</notes>
+    <state>stable</state>
     <filelist>
       <dir name="Archive">
         <file role="php" name="Tar.php"/>
@@ -38,6 +36,12 @@ loaded.
     </filelist>
   </release>
   <changelog>
+    <release>
+      <version>0.10-b1</version>
+      <date>2003-01-08</date>
+      <notes>Add support for long filenames (greater than 99 characters)</notes>
+      <state>beta</state>
+    </release>
     <release>
       <version>0.9</version>
       <date>2002-05-27</date>
