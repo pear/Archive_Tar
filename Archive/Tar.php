@@ -334,6 +334,43 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
+    // {{{ addString()
+    /**
+    * This method add a single string as a file at the
+    * end of the existing archive. If the archive does not yet exists it
+    * is created.
+    *
+    * @param string     $p_filename     A string which contains the full filename path
+    *                                   that will be associated with the string.
+    * @param string     $p_string       The content of the file added in the archive.
+    * @return                           true on success, false on error.
+    * @access public
+    */
+    function addString($p_filename, $p_string)
+    {
+        $v_result = true;
+
+        if (!@is_file($this->_tarname)) {
+            if (!$this->_openWrite()) {
+                return false;
+            }
+            $this->_close();
+        }
+        
+        if (!$this->_openAppend())
+            return false;
+
+        // Need to check the get back to the temporary file ? ....
+        $v_result = $this->_addString($p_filename, $p_string);
+
+        $this->_writeFooter();
+
+        $this->_close();
+
+        return $v_result;
+    }
+    // }}}
+
     // {{{ extractModify()
     /**
     * This method extract all the content of the archive in the directory
@@ -788,6 +825,35 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
+    // {{{ _addString()
+    function _addString($p_filename, $p_string)
+    {
+      if (!$this->_file) {
+          $this->_error('Invalid file descriptor');
+          return false;
+      }
+
+      if ($p_filename == '') {
+          $this->_error('Invalid file name');
+          return false;
+      }
+
+      // ----- Calculate the stored filename
+      $p_filename = $this->_translateWinPath($p_filename, false);;
+
+      if (!$this->_writeHeaderBlock($p_filename, strlen($p_string), 0, 0, "", 0, 0))
+          return false;
+
+      $i=0;
+      while (($v_buffer = substr($p_string, (($i++)*512), 512)) != '') {
+          $v_binary_data = pack("a512", $v_buffer);
+          $this->_writeBlock($v_binary_data);
+      }
+
+      return true;
+    }
+    // }}}
+
     // {{{ _writeHeader()
     function _writeHeader($p_filename, $p_stored_filename)
     {
@@ -796,7 +862,7 @@ class Archive_Tar extends PEAR
         $v_reduce_filename = $this->_pathReduction($p_stored_filename);
 
         if (strlen($v_reduce_filename) > 99) {
-          if (!$this->_writeLongHeader($p_stored_filename))
+          if (!$this->_writeLongHeader($v_reduce_filename))
             return false;
         }
 
@@ -834,6 +900,74 @@ class Archive_Tar extends PEAR
 
         $v_binary_data_first = pack("a100a8a8a8a12A12", $v_reduce_filename, $v_perms, $v_uid, $v_gid, $v_size, $v_mtime);
         $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12", $v_typeflag, $v_linkname, $v_magic, $v_version, $v_uname, $v_gname, $v_devmajor, $v_devminor, $v_prefix, '');
+
+        // ----- Calculate the checksum
+        $v_checksum = 0;
+        // ..... First part of the header
+        for ($i=0; $i<148; $i++)
+            $v_checksum += ord(substr($v_binary_data_first,$i,1));
+        // ..... Ignore the checksum value and replace it by ' ' (space)
+        for ($i=148; $i<156; $i++)
+            $v_checksum += ord(' ');
+        // ..... Last part of the header
+        for ($i=156, $j=0; $i<512; $i++, $j++)
+            $v_checksum += ord(substr($v_binary_data_last,$j,1));
+
+        // ----- Write the first 148 bytes of the header in the archive
+        $this->_writeBlock($v_binary_data_first, 148);
+
+        // ----- Write the calculated checksum
+        $v_checksum = sprintf("%6s ", DecOct($v_checksum));
+        $v_binary_data = pack("a8", $v_checksum);
+        $this->_writeBlock($v_binary_data, 8);
+
+        // ----- Write the last 356 bytes of the header in the archive
+        $this->_writeBlock($v_binary_data_last, 356);
+
+        return true;
+    }
+    // }}}
+
+    // {{{ _writeHeaderBlock()
+    function _writeHeaderBlock($p_filename, $p_size, $p_mtime=0, $p_perms=0, $p_type='', $p_uid=0, $p_gid=0)
+    {
+        $p_filename = $this->_pathReduction($p_filename);
+
+        if (strlen($p_filename) > 99) {
+          if (!$this->_writeLongHeader($p_filename))
+            return false;
+        }
+
+        if ($p_type == "5") {
+          $v_size = sprintf("%11s ", DecOct(0));
+        } else {
+          $v_size = sprintf("%11s ", DecOct($p_size));
+        }
+
+        $v_uid = sprintf("%6s ", DecOct($p_uid));
+        $v_gid = sprintf("%6s ", DecOct($p_gid));
+        $v_perms = sprintf("%6s ", DecOct($p_perms));
+
+        $v_mtime = sprintf("%11s", DecOct($p_mtime));
+
+        $v_linkname = '';
+
+        $v_magic = '';
+
+        $v_version = '';
+
+        $v_uname = '';
+
+        $v_gname = '';
+
+        $v_devmajor = '';
+
+        $v_devminor = '';
+
+        $v_prefix = '';
+
+        $v_binary_data_first = pack("a100a8a8a8a12A12", $p_filename, $v_perms, $v_uid, $v_gid, $v_size, $v_mtime);
+        $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12", $p_type, $v_linkname, $v_magic, $v_version, $v_uname, $v_gname, $v_devmajor, $v_devminor, $v_prefix, '');
 
         // ----- Calculate the checksum
         $v_checksum = 0;
@@ -1249,9 +1383,12 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
-    // {{{ _append()
-    function _append($p_filelist, $p_add_dir='', $p_remove_dir='')
+    // {{{ _openAppend()
+    function _openAppend()
     {
+        if (filesize($this->_tarname) == 0)
+          return $this->_openWrite();
+          
         if ($this->_compress) {
             $this->_close();
 
@@ -1285,21 +1422,16 @@ class Archive_Tar extends PEAR
             if (strlen($v_buffer) != 0) {
                 do{
                     $v_binary_data = pack("a512", "$v_buffer");
+                    $this->_writeBlock($v_binary_data);
                     if ($this->_compress_type == 'gz') {
-                        @gzputs($this->_file, $v_binary_data);
                         $v_buffer = @gzread($v_temp_tar, 512);
                     } elseif ($this->_compress_type == 'bz2') {
-                        @bzwrite($this->_file, $v_binary_data);
                         $v_buffer = @bzread($v_temp_tar, 512);
                     }
 
                 } while (strlen($v_buffer) != 0);
             }
 
-            if ($this->_addList($p_filelist, $p_add_dir, $p_remove_dir))
-                $this->_writeFooter();
-
-            $this->_close();
             if ($this->_compress_type == 'gz')
                 @gzclose($v_temp_tar);
             elseif ($this->_compress_type == 'bz2')
@@ -1309,17 +1441,26 @@ class Archive_Tar extends PEAR
                 $this->_error('Error while deleting temporary file \''.$this->_tarname.'.tmp\'');
             }
 
-            return true;
+        } else {
+            // ----- For not compressed tar, just add files before the last 512 bytes block
+            if (!$this->_openReadWrite())
+               return false;
+
+            clearstatcache();
+            $v_size = filesize($this->_tarname);
+            fseek($this->_file, $v_size-512);
         }
 
-        // ----- For not compressed tar, just add files before the last 512 bytes block
-        if (!$this->_openReadWrite())
-           return false;
+        return true;
+    }
+    // }}}
 
-        clearstatcache();
-        $v_size = filesize($this->_tarname);
-        fseek($this->_file, $v_size-512);
-
+    // {{{ _append()
+    function _append($p_filelist, $p_add_dir='', $p_remove_dir='')
+    {
+        if (!$this->_openAppend())
+            return false;
+            
         if ($this->_addList($p_filelist, $p_add_dir, $p_remove_dir))
            $this->_writeFooter();
 
