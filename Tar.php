@@ -486,7 +486,7 @@ class Archive_Tar extends PEAR
         if (!$this->_addFile($v_filename, $v_header, $p_add_dir, $p_remove_dir))
             return false;
 
-        if (is_dir($v_filename)) {
+        if (@is_dir($v_filename)) {
             if (!($p_hdir = opendir($v_filename))) {
                 $this->_warning("Directory '$v_filename' can not be read");
                 continue;
@@ -593,7 +593,7 @@ class Archive_Tar extends PEAR
 
         $v_mtime = sprintf("%11s", DecOct(filemtime($p_filename)));
 
-        if (is_dir($p_filename))
+        if (@is_dir($p_filename))
           $v_typeflag = "5";
         else
           $v_typeflag = "";
@@ -810,7 +810,7 @@ class Archive_Tar extends PEAR
         }
 
         if (file_exists($v_header[filename])) {
-          if ((is_dir($v_header[filename])) && ($v_header[typeflag] == "")) {
+          if ((@is_dir($v_header[filename])) && ($v_header[typeflag] == "")) {
             $this->_error("File '$v_header[filename]' already exists as a directory");
             return false;
           }
@@ -977,7 +977,7 @@ class Archive_Tar extends PEAR
     // {{{ _dirCheck()
     function _dirCheck($p_dir)
     {
-        if ((is_dir($p_dir)) || ($p_dir == ""))
+        if ((@is_dir($p_dir)) || ($p_dir == ""))
             return true;
 
         $p_parent_dir = dirname($p_dir);
