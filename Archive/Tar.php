@@ -176,7 +176,7 @@ class Archive_Tar extends PEAR
         if ($this->_openRead()) {
             if (!$this->_extractList('', $v_list_detail, "list", '', '')) {
                 unset($v_list_detail);
-                return(0);
+                $v_list_detail = 0;
             }
             $this->_close();
         }
