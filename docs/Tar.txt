@@ -83,37 +83,6 @@ Sample :
 How it works :
   Initialize the object.
 
-Method : Archive_Tar($p_tarname, $p_filelist, $p_compress = false)
-Description :
-  Archive_Tar Class constructor. This flavour of the constructor
-  creates a Tar archive containing the files/directory indicated in
-  $p_filelist. The archive can be compressed by gzip by using the
-  $p_compress option. 
-  If the file already exists and is writable, it is replaced by the
-  new tar. It is a create and not an add. If the file exists and is
-  read-only or is a directory it is not replaced. The method does not
-  return error code (constructor) a PEAR error text is set (but no use
-  ...). 
-  For better error handling it is recommended to create the object,
-  initialise PEAR error handling and call the create() method. 
-Arguments :
-  $p_tarname : A valid filename for the tar archive file.
-  $p_filelist : A list of files and/or directories. (see discussion in
-                add() method about the list structure). 
-  $p_compress : true/false. Indicate if the archive need to be
-                compressed or not. 
-Return value :
-  The Archive_Tar object.
-Sample 1 :
-  $v_list[0]="file.txt";
-  $v_list[1]="data/"; (Optional '/' at the end)
-  $v_list[2]="file.log";
-  $tar_object = new Archive_Tar("tarname.tar", $v_list);
-Sample 2 :
-  $tar_object = new Archive_Tar("tarname.tar", "file.txt data/ file.log");
-How it works :
-  Initialize the object and call the create() method.
-
 Method : create($p_filelist)
 Description :
   This method creates the archive file and add the files / directories
