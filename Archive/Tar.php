@@ -69,6 +69,8 @@ class Archive_Tar extends PEAR
     function Archive_Tar($p_tarname, $p_compress = null)
     {
         $this->PEAR();
+        $this->_compress = false;
+        $this->_compress_type = 'none';
         if ($p_compress === null) {
             if (@file_exists($p_tarname)) {
                 if ($fp = @fopen($p_tarname, "r")) {
@@ -502,8 +504,10 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "w");
         else if ($this->_compress_type == 'bz2')
             $this->_file = @bzopen($this->_tarname, "w");
-        else
+        else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "w");
+        else
+            $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in write mode \''.$this->_tarname.'\'');
@@ -549,8 +553,10 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($v_filename, "rb");
         else if ($this->_compress_type == 'bz2')
             $this->_file = @bzopen($v_filename, "rb");
-        else
+        else if ($this->_compress_type == 'none')
             $this->_file = @fopen($v_filename, "rb");
+        else
+            $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in read mode \''.$v_filename.'\'');
@@ -568,8 +574,10 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "r+b");
         else if ($this->_compress_type == 'bz2')
             $this->_file = @bzopen($this->_tarname, "r+b");
-        else
+        else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "r+b");
+        else
+            $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in read/write mode \''.$this->_tarname.'\'');
@@ -588,8 +596,10 @@ class Archive_Tar extends PEAR
                 @gzclose($this->_file);
             else if ($this->_compress_type == 'bz2')
                 @bzclose($this->_file);
-            else
+            else if ($this->_compress_type == 'none')
                 @fclose($this->_file);
+            else
+                $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
 
             $this->_file = 0;
         }
@@ -634,15 +644,20 @@ class Archive_Tar extends PEAR
                   @gzputs($this->_file, $p_binary_data);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data);
-              else
+              else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data);
+              else
+                  $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
           } else {
               if ($this->_compress_type == 'gz')
                   @gzputs($this->_file, $p_binary_data, $p_len);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data, $p_len);
-              else
+              else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data, $p_len);
+              else
+                  $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
+
           }
       }
       return true;
@@ -661,8 +676,11 @@ class Archive_Tar extends PEAR
               $v_block = @gzread($this->_file, 512);
           else if ($this->_compress_type == 'bz2')
               $v_block = @bzread($this->_file, 512);
-          else
+          else if ($this->_compress_type == 'none')
               $v_block = @fread($this->_file, 512);
+          else
+              $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
+
       }
       return $v_block;
     }
@@ -681,8 +699,11 @@ class Archive_Tar extends PEAR
               // ----- Replace missing bztell() and bzseek()
               for ($i=0; $i<$p_len; $i++)
                   $this->_readBlock();
-          } else
+          } else if ($this->_compress_type == 'none')
               @fseek($this->_file, @ftell($this->_file)+($p_len*512));
+          else
+              $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
+
       }
       return true;
     }
@@ -1413,29 +1434,33 @@ class Archive_Tar extends PEAR
                 return false;
             }
 
-            if ($this->_compress_type == 'gz')
+            if ($this->_compress_type == 'gz') {
                 $v_buffer = @gzread($v_temp_tar, 512);
-            elseif ($this->_compress_type == 'bz2')
-                $v_buffer = @bzread($v_temp_tar, 512);
 
-            // ----- Read the following blocks but not the last one
-            if (strlen($v_buffer) != 0) {
-                do{
-                    $v_binary_data = pack("a512", "$v_buffer");
-                    $this->_writeBlock($v_binary_data);
-                    if ($this->_compress_type == 'gz') {
+                // ----- Read the following blocks but not the last one
+                if (!@gzeof($v_temp_tar)) {
+                    do{
+                        $v_binary_data = pack("a512", $v_buffer);
+                        $this->_writeBlock($v_binary_data);
                         $v_buffer = @gzread($v_temp_tar, 512);
-                    } elseif ($this->_compress_type == 'bz2') {
-                        $v_buffer = @bzread($v_temp_tar, 512);
-                    }
 
-                } while (strlen($v_buffer) != 0);
-            }
+                    } while (!@gzeof($v_temp_tar));
+                }
 
-            if ($this->_compress_type == 'gz')
                 @gzclose($v_temp_tar);
-            elseif ($this->_compress_type == 'bz2')
+            }
+            elseif ($this->_compress_type == 'bz2') {
+                $v_buffered_lines   = array();
+                $v_buffered_lines[] = @bzread($v_temp_tar, 512);
+
+                // ----- Read the following blocks but not the last one
+                while (strlen($v_buffered_lines[] = @bzread($v_temp_tar, 512)) > 0) {
+                    $v_binary_data = pack("a512", array_shift($v_buffered_lines));
+                    $this->_writeBlock($v_binary_data);
+                }
+
                 @bzclose($v_temp_tar);
+            }
 
             if (!@unlink($this->_tarname.".tmp")) {
                 $this->_error('Error while deleting temporary file \''.$this->_tarname.'.tmp\'');
