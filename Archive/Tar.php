@@ -74,6 +74,7 @@ class Archive_Tar extends PEAR
                 if ($fp = @fopen($p_tarname, "r")) {
                     // look for gzip magic cookie
                     $data = fread($fp, 2);
+                    fclose($fp);
                     if ($data == "\37\213") {
                         $this->_compress = true;
                         $this->_compress_type = 'gz';
@@ -112,15 +113,11 @@ class Archive_Tar extends PEAR
                 $extname = 'bz2';
 
             if (!extension_loaded($extname)) {
-                if (OS_WINDOWS) {
-                    @dl("php_$extname.dll");
-                } else {
-                    @dl("$extname.so");
-                }
+                PEAR::loadExtension($extname);
             }
             if (!extension_loaded($extname)) {
                 die("The extension '$extname' couldn't be found.\n".
-                    "Please make sure your version of PHP was built".
+                    "Please make sure your version of PHP was built ".
                     "with '$extname' support.\n");
                 return false;
             }
