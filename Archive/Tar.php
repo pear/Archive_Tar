@@ -771,18 +771,7 @@ class Archive_Tar extends PEAR
               $p_len = 1;
 
           if ($this->_compress_type == 'gz') {
-              // ----- Add check of the gzseek() (trying to solve bug 948)
-              $v_old_pos = @gztell($this->_file);
               @gzseek($this->_file, @gztell($this->_file)+($p_len*512));
-              $v_new_pos = @gztell($this->_file);
-              if ($v_new_pos == 0) {
-                  $this->_error('Buggy gztell() function ..."
-				                ." (please update bug 948)');
-              }
-              if ($v_new_pos < $v_old_pos) {
-                  $this->_error('Buggy gzseek() function ..."
-				                ." (please update bug 948)');
-              }
           }
           else if ($this->_compress_type == 'bz2') {
               // ----- Replace missing bztell() and bzseek()
