@@ -116,6 +116,10 @@ class Archive_Tar extends PEAR
             } else if ($p_compress == 'bz2') {
                 $this->_compress = true;
                 $this->_compress_type = 'bz2';
+            } else {
+                die("Unsupported compression type '$p_compress'\n".
+                    "Supported types are 'gz' and 'bz2'.\n");
+                return false;
             }
         }
         $this->_tarname = $p_tarname;
