@@ -655,7 +655,8 @@ class Archive_Tar extends PEAR
     // {{{ _close()
     function _close()
     {
-        if (isset($this->_file)) {
+        //if (isset($this->_file)) {
+        if (is_resource($this->_file)) {
             if ($this->_compress_type == 'gz')
                 @gzclose($this->_file);
             else if ($this->_compress_type == 'bz2')
