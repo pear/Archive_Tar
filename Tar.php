@@ -737,7 +737,7 @@ class Archive_Tar extends PEAR
     $v_extract_all = true;
     $v_listing = false;        
 
-    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../") && (substr(PHP_OS, 0, 3) != 'WIN')))
+    if (($p_path == "") || ((substr($p_path, 0, 1) != "/") && (substr($p_path, 0, 3) != "../") && (substr($p_path, 1, 3) != ':\'))))
       $p_path = "./".$p_path;
 
     // ----- Look for path to remove format (should end by /)
