@@ -843,15 +843,17 @@ class Archive_Tar extends PEAR
                 $this->_warning("Directory '$v_filename' can not be read");
                 continue;
             }
-            $p_hitem = readdir($p_hdir); // '.' directory
-            $p_hitem = readdir($p_hdir); // '..' directory
             while (false !== ($p_hitem = readdir($p_hdir))) {
-                if ($v_filename != ".")
-                    $p_temp_list[0] = $v_filename.'/'.$p_hitem;
-                else
-                    $p_temp_list[0] = $p_hitem;
+                if (($p_hitem != '.') && ($p_hitem != '..')) {
+                    if ($v_filename != ".")
+                        $p_temp_list[0] = $v_filename.'/'.$p_hitem;
+                    else
+                        $p_temp_list[0] = $p_hitem;
 
-                $v_result = $this->_addList($p_temp_list, $p_add_dir, $p_remove_dir);
+                    $v_result = $this->_addList($p_temp_list,
+					                            $p_add_dir,
+												$p_remove_dir);
+                }
             }
 
             unset($p_temp_list);
