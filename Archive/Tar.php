@@ -61,15 +61,35 @@ class Archive_Tar extends PEAR
     * @param    boolean $p_compress if true, the archive will be gezip(ped)
     * @access public
     */
-    function Archive_Tar($p_tarname, $p_compress = false)
+    function Archive_Tar($p_tarname, $p_compress = null)
     {
         $this->PEAR();
+        if ($p_compress === null) {
+            if (@file_exists($p_tarname)) {
+                if ($fp = @fopen($p_tarname, "r")) {
+                    // look for gzip magic cookie
+                    $data = fread($fp, 2);
+                    if ($data == "\37\213") {
+                        $p_compress = true;
+                    }
+                }
+            } else {
+                // probably a remote file or some file accessible
+                // through a stream interface
+                if (substr($p_tarname, -2) == 'gz') {
+                    $p_compress = true;
+                }
+            }
+        }
         $this->_tarname = $p_tarname;
         if ($p_compress) { // assert zlib extension support
             $extname = 'zlib';
             if (!extension_loaded($extname)) {
-                $dlext = (OS_WINDOWS) ? '.dll' : '.so';
-                @dl($extname . $dlext);
+                if (OS_WINDOWS) {
+                    @dl("php_$extname.dll");
+                } else {
+                    @dl("$extname.so");
+                }
             }
             if (!extension_loaded($extname)) {
                 die("The extension '$extname' couldn't be found.\n".
@@ -78,7 +98,7 @@ class Archive_Tar extends PEAR
                 return false;
             }
         }
-        $this->_compress = $p_compress;
+        $this->_compress = (bool)$p_compress;
     }
     // }}}
 
