@@ -99,7 +99,7 @@ class Archive_Tar extends PEAR
                 }
             }
         } else {
-            if ($p_compress == 'gz') {
+            if (($p_compress == true) || ($p_compress == 'gz')) {
                 $this->_compress = true;
                 $this->_compress_type = 'gz';
             } else if ($p_compress == 'bz2') {
