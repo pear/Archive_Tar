@@ -64,17 +64,19 @@ None
 Public Methods :
 ----------------
 
-Method : Archive_Tar($p_tarname, $compress = false)
+Method : Archive_Tar($p_tarname, $compress = null)
 Description :
   Archive_Tar Class constructor. This flavour of the constructor only
   declare a new Archive_Tar object, identifying it by the name of the
-  tar file. 
+  tar file.
   If the compress argument is set the tar will be read or created as a
-  gzip compressed TAR file. 
+  gzip or bz2 compressed TAR file. 
 Arguments :
   $p_tarname : A valid filename for the tar archive file.
-  $p_compress : true/false. Indicate if the archive need to be
-                compressed or not. 
+  $p_compress : can be null, 'gz' or 'bz2'. For
+                compatibility reason it can also be true. This
+                parameter indicates if gzip or bz2 compression
+                is required. 
 Return value :
   The Archive_Tar object.
 Sample :
@@ -291,6 +293,23 @@ Sample 2 :
 How it works :
   Simply call the addModify() method with the right parameters.
 
+Method : addString($p_filename, $p_string)
+Description :
+  This method add a single string as a file at the
+  end of the existing archive. If the archive does not yet exists it
+  is created.
+Arguments :
+  $p_filename : A string which contains the full filename path
+                that will be associated with the string.
+  $p_string :   The content of the file added in the archive.
+Return value :
+  true on success, false on error.
+Sample 1 :
+  $v_archive = & new Archive_Tar($p_filename);
+  $v_archive->setErrorHandling(PEAR_ERROR_PRINT);
+  $v_result = $v_archive->addString('data/test.txt', 'This is the text of the string');
+
+
 Method : extract($p_path = "")
 Description :
   This method extract all the content of the archive in the directory
@@ -355,6 +374,24 @@ How it works :
   Open the archive and call a more generic function that can extract
   only a part of the archive or all the archive. 
   See extractList() method for more details.
+
+Method : extractInString($p_filename)
+Description :
+  This method extract from the archive one file identified by $p_filename.
+  The return value is a string with the file content, or NULL on error. 
+Arguments :
+  $p_filename : The path of the file to extract in a string. 
+Return value :
+  a string with the file content or NULL.
+Sample :
+  // Imagine tarname.tar with files :
+  //   dev/data/file.txt
+  //   dev/data/log.txt
+  //   dev/readme.txt
+  $v_archive = & new Archive_Tar('tarname.tar');
+  $v_archive->setErrorHandling(PEAR_ERROR_PRINT);
+  $v_string = $v_archive->extractInString('dev/readme.txt');
+  echo $v_string;
 
 Method : listContent()
 Description :
