@@ -63,7 +63,7 @@ class Archive_Tar extends PEAR
         if ($p_compress) { // assert zlib extension support
             $extname = 'zlib';
             if (!extension_loaded($extname)) {
-                $dlext = (substr(PHP_OS, 0, 3) == 'WIN') ? '.dll' : '.so';
+                $dlext = (OS_WINDOWS) ? '.dll' : '.so';
                 @dl($extname . $dlext);
             }
             if (!extension_loaded($extname)) {
