@@ -328,7 +328,7 @@ class Archive_Tar extends PEAR
     {
         $v_result = true;
 
-        if (!@is_file($this->_tarname))
+        if (!$this->_isArchive())
             $v_result = $this->createModify($p_filelist, $p_add_dir, $p_remove_dir);
         else {
             if (is_array($p_filelist))
@@ -362,8 +362,8 @@ class Archive_Tar extends PEAR
     function addString($p_filename, $p_string)
     {
         $v_result = true;
-
-        if (!@is_file($this->_tarname)) {
+        
+        if (!$this->_isArchive()) {
             if (!$this->_openWrite()) {
                 return false;
             }
@@ -558,6 +558,17 @@ class Archive_Tar extends PEAR
     {
         // ----- To be completed
         $this->raiseError($p_message);
+    }
+    // }}}
+
+    // {{{ _isArchive()
+    function _isArchive($p_filename=NULL)
+    {
+        if ($p_filename == NULL) {
+            $p_filename = $this->_tarname;
+        }
+        clearstatcache();
+        return @is_file($p_filename);
     }
     // }}}
 
@@ -885,7 +896,7 @@ class Archive_Tar extends PEAR
 
       $v_stored_filename = $this->_pathReduction($v_stored_filename);
 
-      if (is_file($p_filename)) {
+      if ($this->_isArchive($p_filename)) {
           if (($v_file = @fopen($p_filename, "rb")) == 0) {
               $this->_warning("Unable to open file '$p_filename' in binary read mode");
               return true;
@@ -1383,7 +1394,7 @@ class Archive_Tar extends PEAR
             $this->_error('File '.$v_header['filename'].' already exists as a directory');
             return false;
           }
-          if ((is_file($v_header['filename'])) && ($v_header['typeflag'] == "5")) {
+          if (($this->_isArchive($v_header['filename'])) && ($v_header['typeflag'] == "5")) {
             $this->_error('Directory '.$v_header['filename'].' already exists as a file');
             return false;
           }
