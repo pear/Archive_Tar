@@ -16,10 +16,10 @@
     </maintainer>
   </maintainers>
   <release>
-    <version>0.1</version>
-    <date>2001-08-20</date>
-    <notes>Initial commit</notes>
-    <state>beta</state>
+    <version>0.2</version>
+    <date>2002-02-18</date>
+    <notes>From initial commit to stable</notes>
+    <state>stable</state>
     <filelist>
       <dir name="/" baseinstalldir="Archive">
   	<file role="php">Tar.php</file>
