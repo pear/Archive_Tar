@@ -73,7 +73,7 @@ class Archive_Tar extends PEAR
         $this->_compress_type = 'none';
         if ($p_compress === null) {
             if (@file_exists($p_tarname)) {
-                if ($fp = @fopen($p_tarname, "r")) {
+                if ($fp = @fopen($p_tarname, "rb")) {
                     // look for gzip magic cookie
                     $data = fread($fp, 2);
                     fclose($fp);
@@ -501,11 +501,11 @@ class Archive_Tar extends PEAR
     function _openWrite()
     {
         if ($this->_compress_type == 'gz')
-            $this->_file = @gzopen($this->_tarname, "w");
+            $this->_file = @gzopen($this->_tarname, "wb");
         else if ($this->_compress_type == 'bz2')
-            $this->_file = @bzopen($this->_tarname, "w");
+            $this->_file = @bzopen($this->_tarname, "wb");
         else if ($this->_compress_type == 'none')
-            $this->_file = @fopen($this->_tarname, "w");
+            $this->_file = @fopen($this->_tarname, "wb");
         else
             $this->_error('Unknown or missing compression type ('.$this->_compress_type.')');
 
