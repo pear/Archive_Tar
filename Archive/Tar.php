@@ -20,6 +20,9 @@
 
 require_once 'PEAR.php';
 
+
+define ('ARCHIVE_TAR_ATT_SEPARATOR', 90001);
+
 /**
 * Creates a (compressed) Tar archive
 *
@@ -43,6 +46,11 @@ class Archive_Tar extends PEAR
     * @var string Type of compression : 'none', 'gz' or 'bz2'
     */
     var $_compress_type='none';
+
+    /**
+    * @var string Explode separator
+    */
+    var $_separator=' ';
 
     /**
     * @var file descriptor
@@ -258,7 +266,7 @@ class Archive_Tar extends PEAR
             if (is_array($p_filelist))
                 $v_list = $p_filelist;
             elseif (is_string($p_filelist))
-                $v_list = explode(" ", $p_filelist);
+                $v_list = explode($this->_separator, $p_filelist);
             else {
                 $this->_cleanFile();
                 $this->_error('Invalid file list');
@@ -326,7 +334,7 @@ class Archive_Tar extends PEAR
             if (is_array($p_filelist))
                 $v_list = $p_filelist;
             elseif (is_string($p_filelist))
-                $v_list = explode(" ", $p_filelist);
+                $v_list = explode($this->_separator, $p_filelist);
             else {
                 $this->_error('Invalid file list');
                 return false;
@@ -469,7 +477,7 @@ class Archive_Tar extends PEAR
         if (is_array($p_filelist))
             $v_list = $p_filelist;
         elseif (is_string($p_filelist))
-            $v_list = explode(" ", $p_filelist);
+            $v_list = explode($this->_separator, $p_filelist);
         else {
             $this->_error('Invalid string list');
             return false;
@@ -478,6 +486,58 @@ class Archive_Tar extends PEAR
         if ($v_result = $this->_openRead()) {
             $v_result = $this->_extractList($p_path, $v_list_detail, "partial", $v_list, $p_remove_path);
             $this->_close();
+        }
+
+        return $v_result;
+    }
+    // }}}
+
+    // {{{ setAttribute()
+    /**
+    * This method set specific attributes of the archive. It uses a variable
+    * list of parameters, in the format attribute code + attribute values :
+    * $arch->setAttribute(ARCHIVE_TAR_ATT_SEPARATOR, ',');
+    * @return                       true on success, false on error.
+    * @access public
+    */
+    function setAttribute()
+    {
+        $v_result = true;
+        
+        // ----- Get the number of variable list of arguments
+        if (($v_size = func_num_args()) == 0) {
+            return true;
+        }
+        
+        // ----- Get the arguments
+        $v_att_list = &func_get_args();
+
+        // ----- Read the attributes
+        $i=0;
+        while ($i<$v_size) {
+
+            // ----- Look for next option
+            switch ($v_att_list[$i]) {
+                // ----- Look for options that request a string value
+                case ARCHIVE_TAR_ATT_SEPARATOR :
+                    // ----- Check the number of parameters
+                    if (($i+1) >= $v_size) {
+                        $this->_error('Invalid number of parameters for attribute ARCHIVE_TAR_ATT_SEPARATOR');
+                        return false;
+                    }
+
+                    // ----- Get the value
+                    $this->_separator = $v_att_list[$i+1];
+                    $i++;
+                break;
+
+                default :
+                    $this->_error('Unknow attribute code '.$v_att_list[$i].'');
+                    return false;
+            }
+
+            // ----- Next attribute
+            $i++;
         }
 
         return $v_result;
