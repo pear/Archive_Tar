@@ -60,6 +60,19 @@ class Archive_Tar extends PEAR
     {
         $this->PEAR();
         $this->_tarname = $p_tarname;
+        if ($p_compress) { // assert zlib extension support
+            $extname = 'zlib';
+            if (!extension_loaded($extname)) {
+                $dlext = (substr(PHP_OS, 0, 3) == 'WIN') ? '.dll' : '.so';
+                @dl($extname . $dlext);
+            }
+            if (!extension_loaded($extname)) {
+                die("The extension '$extname' couldn't be loaded. ".
+                    'Probably you don\'t have support in your PHP '.
+                    'to this extension');
+                return false;
+            }
+        }
         $this->_compress = $p_compress;
     }
     // }}}
