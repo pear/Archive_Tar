@@ -194,7 +194,7 @@ class Archive_Tar extends PEAR
                 return false;
             }
 
-            $v_result = $this->_addList($v_list, '', '');
+            $v_result = $this->_addList($v_list, $p_add_dir, $p_remove_dir);
         }
 
         if ($v_result) {
@@ -540,6 +540,9 @@ class Archive_Tar extends PEAR
 
       // ----- Calculate the stored filename
       $v_stored_filename = $p_filename;
+      if (strcmp($p_filename, $p_remove_dir) == 0) {
+          return true;
+      }
       if ($p_remove_dir != '') {
           if (substr($p_remove_dir, -1) != '/')
               $p_remove_dir .= '/';
