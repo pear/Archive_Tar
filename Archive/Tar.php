@@ -82,7 +82,7 @@ class Archive_Tar extends PEAR
         $this->PEAR();
         $this->_compress = false;
         $this->_compress_type = 'none';
-        if ($p_compress === null) {
+        if (($p_compress === null) || ($p_compress == '')) {
             if (@file_exists($p_tarname)) {
                 if ($fp = @fopen($p_tarname, "rb")) {
                     // look for gzip magic cookie
