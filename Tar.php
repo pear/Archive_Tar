@@ -601,15 +601,16 @@ class Archive_Tar extends PEAR
         $v_gid = sprintf("%6s ", DecOct($v_info[5]));
         $v_perms = sprintf("%6s ", DecOct(fileperms($p_filename)));
 
-        clearstatcache();
-        $v_size = sprintf("%11s ", DecOct(filesize($p_filename)));
-
         $v_mtime = sprintf("%11s", DecOct(filemtime($p_filename)));
 
-        if (@is_dir($p_filename))
+        if (@is_dir($p_filename)) {
           $v_typeflag = "5";
-        else
+          $v_size = sprintf("%11s ", DecOct(0));
+        } else {
           $v_typeflag = "";
+          clearstatcache();
+          $v_size = sprintf("%11s ", DecOct(filesize($p_filename)));
+        }
 
         $v_linkname = "";
 
@@ -714,7 +715,9 @@ class Archive_Tar extends PEAR
         $v_header[gid] = OctDec(trim($v_data[gid]));
         $v_header[size] = OctDec(trim($v_data[size]));
         $v_header[mtime] = OctDec(trim($v_data[mtime]));
-        $v_header[typeflag] = $v_data[typeflag];
+        if (($v_header[typeflag] = $v_data[typeflag]) == "5") {
+          $v_header[size] = 0;
+        }
         /* ----- All these fields are removed form the header because they do not carry interesting info
         $v_header[link] = trim($v_data[link]);
         $v_header[magic] = trim($v_data[magic]);
@@ -735,7 +738,7 @@ class Archive_Tar extends PEAR
     $v_result=true;
     $v_nb = 0;
     $v_extract_all = true;
-    $v_listing = false;        
+    $v_listing = false;
 
     if ($p_path == "" || (substr($p_path, 0, 1) != "/" && substr($p_path, 0, 3) != "../" && substr($p_path, 1, 3) != ":\\")) {
       $p_path = "./".$p_path;
@@ -808,7 +811,7 @@ class Archive_Tar extends PEAR
 
       // ----- Look if this file need to be extracted
       if (($v_extract_file) && (!$v_listing))
-      {              
+      {
         if (($p_remove_path != "")
             && (substr($v_header[filename], 0, $p_remove_path_size) == $p_remove_path))
           $v_header[filename] = substr($v_header[filename], $p_remove_path_size);
@@ -883,6 +886,7 @@ class Archive_Tar extends PEAR
           }
 
           // ----- Check the file size
+          clearstatcache();
           if (filesize($v_header[filename]) != $v_header[size]) {
               $this->_error("Extracted file $v_header[filename] does not have the correct file size '".filesize($v_filename)."' ($v_header[size] expected). Archive may be corrupted.");
               return false;
@@ -974,6 +978,7 @@ class Archive_Tar extends PEAR
         if (!$this->_openReadWrite())
            return false;
 
+        clearstatcache();
         $v_size = filesize($this->_tarname);
         fseek($this->_file, $v_size-512);
 
