@@ -5,12 +5,13 @@
   <description>This class provides handling of tar files in PHP.
 It supports creating, listing, extracting and adding to tar files.
 Gzip support is available if PHP has the zlib extension built-in or
-loaded. Bz2 compression is also supported with the bz2 extension loaded.</description>
+loaded. Bz2 compression is also supported with the bz2 extension loaded.
+</description>
   <maintainers>
     <maintainer>
       <user>vblavet</user>
       <name>Vincent Blavet</name>
-      <email>vincent@blavet.net</email>
+      <email>vincent@phpconcept.net</email>
       <role>lead</role>
     </maintainer>
     <maintainer>
@@ -21,12 +22,13 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
     </maintainer>
   </maintainers>
   <release>
-    <version>1.1</version>
-    <date>2003-05-28</date>
+    <version>1.2</version>
+    <date>2004-05-08</date>
     <license>PHP License</license>
     <state>stable</state>
-    <notes>* Add support for BZ2 compression
-* Add support for add and extract without using temporary files : methods addString() and extractInString()</notes>
+    <notes>Add support for other separator than the space char and bug
+	correction
+	</notes>
     <provides type="class" name="Archive_Tar" />
     <provides type="function" name="Archive_Tar::create" />
     <provides type="function" name="Archive_Tar::add" />
@@ -38,12 +40,20 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
     <provides type="function" name="Archive_Tar::extractModify" />
     <provides type="function" name="Archive_Tar::extractInString" />
     <provides type="function" name="Archive_Tar::extractList" />
+    <provides type="function" name="Archive_Tar::setAttribute" />
     <filelist>
-      <file role="php" md5sum="16ae500a22b1fbabcbcf5773306bb206" name="Archive/Tar.php"/>
-      <file role="doc" baseinstalldir="/" md5sum="ae640b797078a6542ea0d236f28efffb" name="docs/Archive_Tar.txt"/>
+      <file role="php" baseinstalldir="/" name="Archive/Tar.php"/>
+      <file role="doc" baseinstalldir="/" name="docs/Archive_Tar.txt"/>
     </filelist>
   </release>
   <changelog>
+  <release>
+    <version>1.1</version>
+    <date>2003-05-28</date>
+    <state>stable</state>
+    <notes>* Add support for BZ2 compression
+* Add support for add and extract without using temporary files : methods addString() and extractInString()</notes>
+  </release>
     <release>
       <version>1.0</version>
       <date>2003-01-24</date>
