@@ -703,7 +703,7 @@ class Archive_Tar extends PEAR
     // {{{ _writeBlock()
     function _writeBlock($p_binary_data, $p_len=null)
     {
-      if ($this->_file) {
+      if (is_resource($this->_file)) {
           if ($p_len === null) {
               if ($this->_compress_type == 'gz')
                   @gzputs($this->_file, $p_binary_data);
@@ -733,7 +733,7 @@ class Archive_Tar extends PEAR
     function _readBlock($p_len=null)
     {
       $v_block = null;
-      if ($this->_file) {
+      if (is_resource($this->_file)) {
           if ($p_len === null)
               $p_len = 512;
               
@@ -754,7 +754,7 @@ class Archive_Tar extends PEAR
     // {{{ _jumpBlock()
     function _jumpBlock($p_len=null)
     {
-      if ($this->_file) {
+      if (is_resource($this->_file)) {
           if ($p_len === null)
               $p_len = 1;
 
@@ -777,7 +777,7 @@ class Archive_Tar extends PEAR
     // {{{ _writeFooter()
     function _writeFooter()
     {
-      if ($this->_file) {
+      if (is_resource($this->_file)) {
           // ----- Write the last 0 filled block for end of archive
           $v_binary_data = pack("a512", '');
           $this->_writeBlock($v_binary_data);
