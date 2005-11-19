@@ -797,14 +797,14 @@ class Archive_Tar extends PEAR
               $p_len = 1;
 
           if ($this->_compress_type == 'gz') {
-              @gzseek($this->_file, @gztell($this->_file)+($p_len*512));
+              @gzseek($this->_file, gztell($this->_file)+($p_len*512));
           }
           else if ($this->_compress_type == 'bz2') {
               // ----- Replace missing bztell() and bzseek()
               for ($i=0; $i<$p_len; $i++)
                   $this->_readBlock();
           } else if ($this->_compress_type == 'none')
-              @fseek($this->_file, @ftell($this->_file)+($p_len*512));
+              @fseek($this->_file, ftell($this->_file)+($p_len*512));
           else
               $this->_error('Unknown or missing compression type ('
 			                .$this->_compress_type.')');
@@ -973,7 +973,7 @@ class Archive_Tar extends PEAR
       $p_filename = $this->_translateWinPath($p_filename, false);;
 
       if (!$this->_writeHeaderBlock($p_filename, strlen($p_string),
-	                                0, 0, "", 0, 0))
+	                                  time(), 384, "", 0, 0))
           return false;
 
       $i=0;
