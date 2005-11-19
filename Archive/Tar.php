@@ -1743,7 +1743,7 @@ class Archive_Tar extends PEAR
     // {{{ _translateWinPath()
     function _translateWinPath($p_path, $p_remove_disk_letter=true)
     {
-      if (OS_WINDOWS) {
+      if (defined('OS_WINDOWS') && OS_WINDOWS) {
           // ----- Look for potential disk letter
           if (   ($p_remove_disk_letter)
 		      && (($v_position = strpos($p_path, ':')) != false)) {
