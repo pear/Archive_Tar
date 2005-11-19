@@ -821,6 +821,7 @@ class Archive_Tar extends PEAR
           // ----- Write the last 0 filled block for end of archive
           $v_binary_data = pack("a512", '');
           $this->_writeBlock($v_binary_data);
+          $this->_writeBlock($v_binary_data);
       }
       return true;
     }
