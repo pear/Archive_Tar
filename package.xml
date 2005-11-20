@@ -36,7 +36,7 @@ Change filemode (from pear-core/Archive/Tar.php v.1.21)
     <provides type="class" name="Archive_Tar" />
     <provides type="function" name="Archive_Tar::create" />
     <provides type="function" name="Archive_Tar::add" />
-    <provides type="function" name="Ar<img src="sync-php4" class="" alt="sync-php4, 0 kB" title="sync-php4" height="0" width="0" />chive_Tar::extract" />
+    <provides type="function" name="Archive_Tar::extract" />
     <provides type="function" name="Archive_Tar::listContent" />
     <provides type="function" name="Archive_Tar::createModify" />
     <provides type="function" name="Archive_Tar::addModify" />
