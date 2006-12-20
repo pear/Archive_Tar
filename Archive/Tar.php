@@ -1218,6 +1218,9 @@ class Archive_Tar extends PEAR
             return false;
         }
 
+        if (!is_array($v_header)) {
+            $v_header = array();
+        }
         // ----- Calculate the checksum
         $v_checksum = 0;
         // ..... First part of the header
@@ -1557,6 +1560,9 @@ class Archive_Tar extends PEAR
           $v_file_dir = '/';
 
         $p_list_detail[$v_nb++] = $v_header;
+        if (is_array($p_file_list) && (count($p_list_detail) == count($p_file_list))) {
+            return true;
+        }
       }
     }
 
