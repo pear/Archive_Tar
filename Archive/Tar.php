@@ -1255,6 +1255,11 @@ class Archive_Tar extends PEAR
 
         // ----- Extract the properties
         $v_header['filename'] = trim($v_data['filename']);
+        if ($this->_maliciousFilename($v_header['filename'])) {
+            $this->_error('Malicious .tar detected, file "' . $v_header['filename'] .
+                '" will not install in desired directory tree');
+            return false;
+        }
         $v_header['mode'] = OctDec(trim($v_data['mode']));
         $v_header['uid'] = OctDec(trim($v_data['uid']));
         $v_header['gid'] = OctDec(trim($v_data['gid']));
@@ -1275,6 +1280,26 @@ class Archive_Tar extends PEAR
         */
 
         return true;
+    }
+    // }}}
+
+    // {{{ _maliciousFilename()
+    /**
+     * Detect and report a malicious file name
+     *
+     * @param string $file
+     * @return bool
+     * @access private
+     */
+    function _maliciousFilename($file)
+    {
+        if (strpos($file, '/../') !== false) {
+            return true;
+        }
+        if (strpos($file, '../') === 0) {
+            return true;
+        }
+        return false;
     }
     // }}}
 
@@ -1299,6 +1324,11 @@ class Archive_Tar extends PEAR
         return false;
 
       $v_header['filename'] = $v_filename;
+        if ($this->_maliciousFilename($v_filename)) {
+            $this->_error('Malicious .tar detected, file "' . $v_filename .
+                '" will not install in desired directory tree');
+            return false;
+      }
 
       return true;
     }
