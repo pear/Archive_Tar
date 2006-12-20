@@ -49,6 +49,7 @@ Correct Bug #5452 fix for &quot;lone zero block&quot; when untarring packages
 Change filemode (from pear-core/Archive/Tar.php v.1.21)
 Correct Bug #6933 Archive_Tar (Tar file management class) Directory traversal	
 Correct Bug #8114 Files added on-the-fly not storing date
+Correct Bug #9352 Bug on _dirCheck function over nfs path
  </notes>
  <contents>
   <dir name="/">

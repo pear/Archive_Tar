@@ -1710,6 +1710,7 @@ class Archive_Tar extends PEAR
      */
     function _dirCheck($p_dir)
     {
+        clearstatcache();
         if ((@is_dir($p_dir)) || ($p_dir == ''))
             return true;
 
