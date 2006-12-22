@@ -1268,9 +1268,9 @@ class Archive_Tar extends PEAR
         if (($v_header['typeflag'] = $v_data['typeflag']) == "5") {
           $v_header['size'] = 0;
         }
+        $v_header['link'] = trim($v_data['link']);
         /* ----- All these fields are removed form the header because
 		they do not carry interesting info
-        $v_header[link] = trim($v_data[link]);
         $v_header[magic] = trim($v_data[magic]);
         $v_header[version] = trim($v_data[version]);
         $v_header[uname] = trim($v_data[uname]);
@@ -1530,14 +1530,7 @@ class Archive_Tar extends PEAR
                 }
             }
           } elseif ($v_header['typeflag'] == "2") {
-              if ($v_header['size'] > 100) {
-                  $this->_error('Unable to extract symbolic link {'
-                                .$v_header['filename'].'}, cannot be'
-                                .' link to a filename > 100 characters');
-                  return false;
-              }
-              $linkname = substr($this->_readBlock(), 0, $v_header['size']);
-              if (!@symlink($linkname, $v_header['filename'])) {
+              if (!@symlink($v_header['link'], $v_header['filename'])) {
                   $this->_error('Unable to extract symbolic link {'
                                 .$v_header['filename'].'}');
                   return false;
