@@ -22,6 +22,7 @@ require_once 'PEAR.php';
 
 
 define ('ARCHIVE_TAR_ATT_SEPARATOR', 90001);
+define ('ARCHIVE_TAR_END_BLOCK', pack("a512", ''));
 
 /**
 * Creates a (compressed) Tar archive
@@ -819,8 +820,7 @@ class Archive_Tar extends PEAR
     {
       if (is_resource($this->_file)) {
           // ----- Write the last 0 filled block for end of archive
-          $v_binary_data = pack("a512", '');
-          $this->_writeBlock($v_binary_data);
+          $v_binary_data = pack('a1024', '');
           $this->_writeBlock($v_binary_data);
       }
       return true;
@@ -1640,29 +1640,25 @@ class Archive_Tar extends PEAR
             }
 
             if ($this->_compress_type == 'gz') {
-                $v_buffer = @gzread($v_temp_tar, 512);
-
-                // ----- Read the following blocks but not the last one
-                if (!@gzeof($v_temp_tar)) {
-                    do{
-                        $v_binary_data = pack("a512", $v_buffer);
-                        $this->_writeBlock($v_binary_data);
-                        $v_buffer = @gzread($v_temp_tar, 512);
-
-                    } while (!@gzeof($v_temp_tar));
+                while (!@gzeof($v_temp_tar)) {
+                    $v_buffer = @gzread($v_temp_tar, 512);
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) {
+                        // do not copy end blocks, we will re-make them
+                        // after appending
+                        continue;
+                    }
+                    $v_binary_data = pack("a512", $v_buffer);
+                    $this->_writeBlock($v_binary_data);
                 }
 
                 @gzclose($v_temp_tar);
             }
             elseif ($this->_compress_type == 'bz2') {
-                $v_buffered_lines   = array();
-                $v_buffered_lines[] = @bzread($v_temp_tar, 512);
-
-                // ----- Read the following blocks but not the last one
-                while (strlen($v_buffered_lines[]
-				              = @bzread($v_temp_tar, 512)) > 0) {
-                    $v_binary_data = pack("a512",
-					                      array_shift($v_buffered_lines));
+                while (strlen($v_buffer = @bzread($v_temp_tar, 512)) > 0) {
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) {
+                        continue;
+                    }
+                    $v_binary_data = pack("a512", $v_buffer);
                     $this->_writeBlock($v_binary_data);
                 }
 
@@ -1676,13 +1672,23 @@ class Archive_Tar extends PEAR
 
         } else {
             // ----- For not compressed tar, just add files before the last
-			//       512 bytes block
+			//       one or two 512 bytes block
             if (!$this->_openReadWrite())
                return false;
 
             clearstatcache();
             $v_size = filesize($this->_tarname);
-            fseek($this->_file, $v_size-512);
+
+            // We might have zero, one or two end blocks.
+            // The standard is two, but we should try to handle 
+            // other cases.
+            fseek($this->_file, $v_size - 1024);
+            if (fread($this->_file, 512) == ARCHIVE_TAR_END_BLOCK) {
+                fseek($this->_file, $v_size - 1024);
+            }
+            elseif (fread($this->_file, 512) == ARCHIVE_TAR_END_BLOCK) {
+                fseek($this->_file, $v_size - 512);    
+            }
         }
 
         return true;
