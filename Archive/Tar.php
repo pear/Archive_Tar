@@ -1529,6 +1529,19 @@ class Archive_Tar extends PEAR
                     return false;
                 }
             }
+          } elseif ($v_header['typeflag'] == "2") {
+              if ($v_header['size'] > 100) {
+                  $this->_error('Unable to extract symbolic link {'
+                                .$v_header['filename'].'}, cannot be'
+                                .' link to a filename > 100 characters');
+                  return false;
+              }
+              $linkname = substr($this->_readBlock(), 0, $v_header['size']);
+              if (!@symlink($linkname, $v_header['filename'])) {
+                  $this->_error('Unable to extract symbolic link {'
+                                .$v_header['filename'].'}');
+                  return false;
+              }
           } else {
               if (($v_dest_file = @fopen($v_header['filename'], "wb")) == 0) {
                   $this->_error('Error while opening {'.$v_header['filename']
