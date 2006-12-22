@@ -38,10 +38,10 @@ Remove duplicate remove error display with '@'
 Correct Bug #3909 : Check existence of OS_WINDOWS constant
 Correct Bug #5452 fix for "lone zero block" when untarring packages
 Change filemode (from pear-core/Archive/Tar.php v.1.21)
+Correct Bug #6486 Can not extract symlinks
 Correct Bug #6933 Archive_Tar (Tar file management class) Directory traversal	
 Correct Bug #8114 Files added on-the-fly not storing date
 Correct Bug #9352 Bug on _dirCheck function over nfs path
-Correct Bug #6486 Can not extract symlinks
 	</notes>
     <provides type="class" name="Archive_Tar" />
     <provides type="function" name="Archive_Tar::create" />
