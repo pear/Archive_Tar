@@ -599,7 +599,7 @@ class Archive_Tar extends PEAR
         if ($this->_compress_type == 'gz')
             $this->_file = @gzopen($this->_tarname, "wb9");
         else if ($this->_compress_type == 'bz2')
-            $this->_file = @bzopen($this->_tarname, "wb");
+            $this->_file = @bzopen($this->_tarname, "w");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "wb");
         else
@@ -652,7 +652,7 @@ class Archive_Tar extends PEAR
         if ($this->_compress_type == 'gz')
             $this->_file = @gzopen($v_filename, "rb");
         else if ($this->_compress_type == 'bz2')
-            $this->_file = @bzopen($v_filename, "rb");
+            $this->_file = @bzopen($v_filename, "r");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($v_filename, "rb");
         else
@@ -673,9 +673,11 @@ class Archive_Tar extends PEAR
     {
         if ($this->_compress_type == 'gz')
             $this->_file = @gzopen($this->_tarname, "r+b");
-        else if ($this->_compress_type == 'bz2')
-            $this->_file = @bzopen($this->_tarname, "r+b");
-        else if ($this->_compress_type == 'none')
+        else if ($this->_compress_type == 'bz2') {
+            $this->_error('Unable to open bz2 in read/write mode \''
+			              .$this->_tarname.'\' (limitation of bz2 extension)');
+            return false;
+        } else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "r+b");
         else
             $this->_error('Unknown or missing compression type ('
@@ -1625,7 +1627,7 @@ class Archive_Tar extends PEAR
             if ($this->_compress_type == 'gz')
                 $v_temp_tar = @gzopen($this->_tarname.".tmp", "rb");
             elseif ($this->_compress_type == 'bz2')
-                $v_temp_tar = @bzopen($this->_tarname.".tmp", "rb");
+                $v_temp_tar = @bzopen($this->_tarname.".tmp", "r");
                 
             if ($v_temp_tar == 0) {
                 $this->_error('Unable to open file \''.$this->_tarname
