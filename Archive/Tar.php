@@ -1325,6 +1325,7 @@ class Archive_Tar extends PEAR
       if (!$this->_readHeader($v_binary_data, $v_header))
         return false;
 
+      $v_filename = trim($v_filename);
       $v_header['filename'] = $v_filename;
         if ($this->_maliciousFilename($v_filename)) {
             $this->_error('Malicious .tar detected, file "' . $v_filename .
