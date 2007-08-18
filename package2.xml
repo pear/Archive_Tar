@@ -44,6 +44,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.
     minor bugfix release
     * fix Bug #9921 compression with bzip2 fails [cellog]
     * fix Bug #11594 _readLongHeader leaves 0 bytes in filename [jamessas]
+    * fix Bug #11769 Incorrect symlink handing [fajar99]
  </notes>
  <contents>
   <dir name="/">

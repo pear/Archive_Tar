@@ -589,7 +589,7 @@ class Archive_Tar extends PEAR
             $p_filename = $this->_tarname;
         }
         clearstatcache();
-        return @is_file($p_filename);
+        return @is_file($p_filename) && !@is_link($p_filename);
     }
     // }}}
 
@@ -868,7 +868,7 @@ class Archive_Tar extends PEAR
         if (!$this->_addFile($v_filename, $v_header, $p_add_dir, $p_remove_dir))
             return false;
 
-        if (@is_dir($v_filename)) {
+        if (@is_dir($v_filename) && !@is_link($v_filename)) {
             if (!($p_hdir = opendir($v_filename))) {
                 $this->_warning("Directory '$v_filename' can not be read");
                 continue;
@@ -1001,23 +1001,27 @@ class Archive_Tar extends PEAR
             return false;
         }
 
-        $v_info = stat($p_filename);
+        $v_info = lstat($p_filename);
         $v_uid = sprintf("%6s ", DecOct($v_info[4]));
         $v_gid = sprintf("%6s ", DecOct($v_info[5]));
-        $v_perms = sprintf("%6s ", DecOct(fileperms($p_filename)));
+        $v_perms = sprintf("%6s ", DecOct($v_info['mode']));
 
-        $v_mtime = sprintf("%11s", DecOct(filemtime($p_filename)));
+        $v_mtime = sprintf("%11s", DecOct($v_info['mode']));
 
-        if (@is_dir($p_filename)) {
+        $v_linkname = '';
+
+        if (@is_link($p_filename)) {
+          $v_typeflag = '2';
+          $v_linkname = readlink($p_filename);
+          $v_size = sprintf("%11s ", DecOct(0));
+        } elseif (@is_dir($p_filename)) {
           $v_typeflag = "5";
           $v_size = sprintf("%11s ", DecOct(0));
         } else {
           $v_typeflag = '';
           clearstatcache();
-          $v_size = sprintf("%11s ", DecOct(filesize($p_filename)));
+          $v_size = sprintf("%11s ", DecOct($v_info['size']));
         }
-
-        $v_linkname = '';
 
         $v_magic = '';
 
@@ -1533,6 +1537,9 @@ class Archive_Tar extends PEAR
                 }
             }
           } elseif ($v_header['typeflag'] == "2") {
+              if (@file_exists($v_header['filename'])) {
+                  @unlink($v_header['filename']);
+              }
               if (!@symlink($v_header['link'], $v_header['filename'])) {
                   $this->_error('Unable to extract symbolic link {'
                                 .$v_header['filename'].'}');
