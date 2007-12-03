@@ -323,8 +323,8 @@ class PEAR_PHPTest
                 return false;
             }
         }
-        $savecontrol = $control;
-        $savetest = $test;
+        $savecontrol = sort($control);
+        $savetest = sort($test);
         unset($control['_lastmodified']);
         unset($test['_lastmodified']);
         if (var_export($control, true) != var_export($test, true)) {
