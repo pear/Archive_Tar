@@ -67,10 +67,10 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.
  <dependencies>
   <required>
    <php>
-    <min>4.0.0</min>
+    <min>4.3.0</min>
    </php>
    <pearinstaller>
-    <min>1.4.0b1</min>
+    <min>1.5.4</min>
    </pearinstaller>
   </required>
  </dependencies>
