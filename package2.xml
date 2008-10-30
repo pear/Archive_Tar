@@ -39,8 +39,10 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.
   <release>stable</release>
   <api>stable</api>
  </stability>
- <license uri="http://www.php.net/license">PHP License</license>
+ <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
  <notes>
+ Change the license to New BSD license
+
     minor bugfix release
     * fix Bug #9921 compression with bzip2 fails [cellog]
     * fix Bug #11594 _readLongHeader leaves 0 bytes in filename [jamessas]
@@ -92,7 +94,7 @@ Correct Bug #3909 : Check existence of OS_WINDOWS constant
 Correct Bug #5452 fix for &quot;lone zero block&quot; when untarring packages
 Change filemode (from pear-core/Archive/Tar.php v.1.21)
 Correct Bug #6486 Can not extract symlinks
-Correct Bug #6933 Archive_Tar (Tar file management class) Directory traversal	
+Correct Bug #6933 Archive_Tar (Tar file management class) Directory traversal
 Correct Bug #8114 Files added on-the-fly not storing date
 Correct Bug #9352 Bug on _dirCheck function over nfs path
    </notes>
@@ -123,7 +125,7 @@ Correct Bug #9352 Bug on _dirCheck function over nfs path
    <date>2005-03-06</date>
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>Bugs correction (2475, 2488, 2135, 2176)
-	
+
    </notes>
   </release>
   <release>
@@ -139,7 +141,7 @@ Correct Bug #9352 Bug on _dirCheck function over nfs path
    <license uri="http://www.php.net/license">PHP License</license>
    <notes>Add support for other separator than the space char and bug
 	correction
-	
+
    </notes>
   </release>
   <release>
