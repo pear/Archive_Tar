@@ -1363,7 +1363,7 @@ class Archive_Tar extends PEAR
       }
       if (($v_header['size'] % 512) != 0) {
         $v_content = $this->_readBlock();
-        $v_filename .= $v_content;
+        $v_filename .= trim($v_content);
       }
 
       // ----- Read the next header
