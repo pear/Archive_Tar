@@ -1025,34 +1025,44 @@ class Archive_Tar extends PEAR
         }
 
         $v_info = lstat($p_filename);
-        $v_uid = sprintf("%6s ", DecOct($v_info[4]));
-        $v_gid = sprintf("%6s ", DecOct($v_info[5]));
-        $v_perms = sprintf("%6s ", DecOct($v_info['mode']));
+        $v_uid = sprintf("%07s", DecOct($v_info[4]));
+        $v_gid = sprintf("%07s", DecOct($v_info[5]));
+        $v_perms = sprintf("%07s", DecOct($v_info['mode'] & 000777));
 
-        $v_mtime = sprintf("%11s", DecOct($v_info['mtime']));
+        $v_mtime = sprintf("%011s", DecOct($v_info['mtime']));
 
         $v_linkname = '';
 
         if (@is_link($p_filename)) {
           $v_typeflag = '2';
           $v_linkname = readlink($p_filename);
-          $v_size = sprintf("%11s ", DecOct(0));
+          $v_size = sprintf("%011s", DecOct(0));
         } elseif (@is_dir($p_filename)) {
           $v_typeflag = "5";
-          $v_size = sprintf("%11s ", DecOct(0));
+          $v_size = sprintf("%011s", DecOct(0));
         } else {
-          $v_typeflag = '';
+          $v_typeflag = '0';
           clearstatcache();
-          $v_size = sprintf("%11s ", DecOct($v_info['size']));
+          $v_size = sprintf("%011s", DecOct($v_info['size']));
         }
 
-        $v_magic = '';
+        $v_magic = 'ustar ';
 
-        $v_version = '';
-
-        $v_uname = '';
-
-        $v_gname = '';
+        $v_version = ' ';
+        
+        if (function_exists('posix_getpwuid'))
+        {
+          $userinfo = posix_getpwuid($v_info[4]);
+          $groupinfo = posix_getgrgid($v_info[5]);
+          
+          $v_uname = $userinfo['name'];
+          $v_gname = $groupinfo['name'];
+        }
+        else
+        {
+          $v_uname = '';
+          $v_gname = '';
+        }
 
         $v_devmajor = '';
 
@@ -1060,7 +1070,7 @@ class Archive_Tar extends PEAR
 
         $v_prefix = '';
 
-        $v_binary_data_first = pack("a100a8a8a8a12A12",
+        $v_binary_data_first = pack("a100a8a8a8a12a12",
 		                            $v_reduce_filename, $v_perms, $v_uid,
 									$v_gid, $v_size, $v_mtime);
         $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12",
@@ -1084,7 +1094,7 @@ class Archive_Tar extends PEAR
         $this->_writeBlock($v_binary_data_first, 148);
 
         // ----- Write the calculated checksum
-        $v_checksum = sprintf("%6s ", DecOct($v_checksum));
+        $v_checksum = sprintf("%06s ", DecOct($v_checksum));
         $v_binary_data = pack("a8", $v_checksum);
         $this->_writeBlock($v_binary_data, 8);
 
@@ -1107,27 +1117,37 @@ class Archive_Tar extends PEAR
         }
 
         if ($p_type == "5") {
-          $v_size = sprintf("%11s ", DecOct(0));
+          $v_size = sprintf("%011s", DecOct(0));
         } else {
-          $v_size = sprintf("%11s ", DecOct($p_size));
+          $v_size = sprintf("%011s", DecOct($p_size));
         }
 
-        $v_uid = sprintf("%6s ", DecOct($p_uid));
-        $v_gid = sprintf("%6s ", DecOct($p_gid));
-        $v_perms = sprintf("%6s ", DecOct($p_perms));
+        $v_uid = sprintf("%07s", DecOct($p_uid));
+        $v_gid = sprintf("%07s", DecOct($p_gid));
+        $v_perms = sprintf("%07s", DecOct($p_perms & 000777));
 
         $v_mtime = sprintf("%11s", DecOct($p_mtime));
 
         $v_linkname = '';
 
-        $v_magic = '';
+        $v_magic = 'ustar ';
 
-        $v_version = '';
+        $v_version = ' ';
 
-        $v_uname = '';
-
-        $v_gname = '';
-
+        if (function_exists('posix_getpwuid'))
+        {
+          $userinfo = posix_getpwuid($p_uid);
+          $groupinfo = posix_getgrgid($p_gid);
+          
+          $v_uname = $userinfo['name'];
+          $v_gname = $groupinfo['name'];
+        }
+        else
+        {
+          $v_uname = '';
+          $v_gname = '';
+        }
+        
         $v_devmajor = '';
 
         $v_devminor = '';
@@ -1158,7 +1178,7 @@ class Archive_Tar extends PEAR
         $this->_writeBlock($v_binary_data_first, 148);
 
         // ----- Write the calculated checksum
-        $v_checksum = sprintf("%6s ", DecOct($v_checksum));
+        $v_checksum = sprintf("%06s ", DecOct($v_checksum));
         $v_binary_data = pack("a8", $v_checksum);
         $this->_writeBlock($v_binary_data, 8);
 
@@ -1192,7 +1212,7 @@ class Archive_Tar extends PEAR
 
         $v_prefix = '';
 
-        $v_binary_data_first = pack("a100a8a8a8a12A12",
+        $v_binary_data_first = pack("a100a8a8a8a12a12",
 		                            '././@LongLink', 0, 0, 0, $v_size, 0);
         $v_binary_data_last = pack("a1a100a6a2a32a32a8a8a155a12",
 		                           $v_typeflag, $v_linkname, $v_magic,
@@ -1215,7 +1235,7 @@ class Archive_Tar extends PEAR
         $this->_writeBlock($v_binary_data_first, 148);
 
         // ----- Write the calculated checksum
-        $v_checksum = sprintf("%6s ", DecOct($v_checksum));
+        $v_checksum = sprintf("%06s ", DecOct($v_checksum));
         $v_binary_data = pack("a8", $v_checksum);
         $this->_writeBlock($v_binary_data, 8);
 
