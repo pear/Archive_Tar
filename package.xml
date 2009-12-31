@@ -59,7 +59,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
   <name>PEAR</name>
   <channel>pear.php.net</channel>
   <min>1.8.0</min>
-  <max>1.9.02</max>
+  <max>1.9.0</max>
  </compatible>
  <dependencies>
   <required>
