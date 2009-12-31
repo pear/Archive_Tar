@@ -43,7 +43,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
  <notes>
-
+* Fix Bug #16958: Update &apos;compatible&apos; tag in package.xml [mrook]
  </notes>
  <contents>
   <dir name="/">
