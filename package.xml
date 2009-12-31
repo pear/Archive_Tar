@@ -31,10 +31,10 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
   <email>stig@php.net</email>
   <active>no</active>
  </helper>
- <date>2009-12-30</date>
- <time>23:50:00</time>
+ <date>2009-12-31</date>
+ <time>09:43:15</time>
  <version>
-  <release>1.3.4</release>
+  <release>1.3.5</release>
   <api>1.3.1</api>
  </version>
  <stability>
@@ -43,11 +43,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
  </stability>
  <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
  <notes>
-* Fix Bug #11871: wrong result of ::listContent() if filename begins or ends with space [mrook]
- * Fix Bug #12462: invalid tar magic [mrook]
- * Fix Bug #13918: Long filenames may get up to 511 0x00 bytes appended on read [mrook]
- * Fix Bug #16202: Bogus modification times [mrook]
- * Implement Feature #16212: Die is not exception [mrook]
+
  </notes>
  <contents>
   <dir name="/">
@@ -63,7 +59,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
   <name>PEAR</name>
   <channel>pear.php.net</channel>
   <min>1.8.0</min>
-  <max>1.9.0</max>
+  <max>1.9.02</max>
  </compatible>
  <dependencies>
   <required>
@@ -77,6 +73,25 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
  </dependencies>
  <phprelease />
  <changelog>
+  <release>
+   <version>
+    <release>1.3.4</release>
+    <api>1.3.1</api>
+   </version>
+   <stability>
+    <release>stable</release>
+    <api>stable</api>
+   </stability>
+   <date>2009-12-30</date>
+   <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
+   <notes>
+* Fix Bug #11871: wrong result of ::listContent() if filename begins or ends with space [mrook]
+ * Fix Bug #12462: invalid tar magic [mrook]
+ * Fix Bug #13918: Long filenames may get up to 511 0x00 bytes appended on read [mrook]
+ * Fix Bug #16202: Bogus modification times [mrook]
+ * Implement Feature #16212: Die is not exception [mrook]
+   </notes>
+  </release>
   <release>
    <version>
     <release>1.3.3</release>
