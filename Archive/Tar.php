@@ -86,6 +86,11 @@ class Archive_Tar extends PEAR
     */
     var $_temp_tarname='';
 
+    /**
+    * @var string regular expression for ignoring files or directories
+    */
+    var $_ignore_regexp='';
+
     // {{{ constructor
     /**
     * Archive_Tar Class constructor. This flavour of the constructor only
@@ -589,6 +594,36 @@ class Archive_Tar extends PEAR
     }
     // }}}
 
+    // {{{ setIgnoreRegexp()
+    /**
+    * This method sets the regular expression for ignoring files and directories
+    * at import, for example:
+    * $arch->setIgnoreRegexp("#CVS|\.svn#");
+    * @param string $regexp         regular expression defining which files or directories to ignore
+    * @access public
+    */
+    function setIgnoreRegexp($regexp)
+    {
+    	$this->_ignore_regexp = $regexp;
+    }
+    // }}}
+
+    // {{{ setIgnoreList()
+    /**
+    * This method sets the regular expression for ignoring all files and directories
+    * matching the filenames in the array list at import, for example:
+    * $arch->setIgnoreList(array('CVS', '.svn', 'bin/tool'));
+    * @param array $list         a list of file or directory names to ignore
+    * @access public
+    */
+    function setIgnoreList($list)
+    {
+    	$regexp = str_replace(array('#', '.', '^', '$'), array('\#', '\.', '\^', '\$'), $list);
+    	$regexp = '#/'.join('$|/', $list).'#';
+    	$this->setIgnoreRegexp($regexp);
+    }
+    // }}}
+
     // {{{ _error()
     function _error($p_message)
     {
@@ -881,6 +916,12 @@ class Archive_Tar extends PEAR
 
         if ($v_filename == '')
             continue;
+
+       	// ----- ignore files and directories matching the ignore regular expression
+       	if ($this->_ignore_regexp && preg_match($this->_ignore_regexp, '/'.$v_filename)) {
+            $this->_warning("File '$v_filename' ignored");
+       	    continue;
+       	}
 
         if (!file_exists($v_filename)) {
             $this->_warning("File '$v_filename' does not exist");
