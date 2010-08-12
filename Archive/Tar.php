@@ -91,6 +91,11 @@ class Archive_Tar extends PEAR
     */
     var $_ignore_regexp='';
 
+    /**
+     * @var object PEAR_Error object
+     */
+    var $error_object=NULL; 
+
     // {{{ constructor
     /**
     * Archive_Tar Class constructor. This flavour of the constructor only
@@ -627,16 +632,14 @@ class Archive_Tar extends PEAR
     // {{{ _error()
     function _error($p_message)
     {
-        // ----- To be completed
-        $this->raiseError($p_message);
+        $this->error_object = &$this->raiseError($p_message); 
     }
     // }}}
 
     // {{{ _warning()
     function _warning($p_message)
     {
-        // ----- To be completed
-        $this->raiseError($p_message);
+        $this->error_object = &$this->raiseError($p_message); 
     }
     // }}}
 
