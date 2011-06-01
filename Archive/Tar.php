@@ -941,7 +941,7 @@ class Archive_Tar extends PEAR
        	    continue;
        	}
 
-        if (!file_exists($v_filename)) {
+        if (!file_exists($v_filename) && !is_link($v_filename)) {
             $this->_warning("File '$v_filename' does not exist");
             continue;
         }
