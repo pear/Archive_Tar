@@ -16,5 +16,9 @@ $phpunit->assertErrors(array(
 ), 'after 2');
 echo 'tests done';
 ?>
+--CLEAN--
+<?php
+@rmdir('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa');
+?>
 --EXPECT--
 tests done

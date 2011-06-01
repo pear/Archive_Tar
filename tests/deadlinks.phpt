@@ -34,10 +34,13 @@ echo 'tests done';
 --CLEAN--
 <?php
 @rmdir('test/a');
+@unlink('test/b');
 @unlink('test/dir_link');
 @unlink('test/file_link');
 @unlink('test/dead_link');
 @rmdir('test');
+@unlink('test1.tar');
+@unlink('test2.tar');
 ?>
 --EXPECT--
 tests done
