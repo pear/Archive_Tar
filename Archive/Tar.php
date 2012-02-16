@@ -674,9 +674,9 @@ class Archive_Tar extends PEAR
     // {{{ _openWrite()
     function _openWrite()
     {
-        if ($this->_compress_type == 'gz')
+        if ($this->_compress_type == 'gz' && function_exists('gzopen'))
             $this->_file = @gzopen($this->_tarname, "wb9");
-        else if ($this->_compress_type == 'bz2')
+        else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($this->_tarname, "w");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "wb");
