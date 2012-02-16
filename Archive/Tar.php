@@ -1920,7 +1920,11 @@ class Archive_Tar extends PEAR
                 }
             }
         }
-        $v_result = strtr($v_result, '\\', '/');
+        
+        if (defined('OS_WINDOWS') && OS_WINDOWS) {
+            $v_result = strtr($v_result, '\\', '/');
+        }
+        
         return $v_result;
     }
 
