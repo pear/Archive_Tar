@@ -1775,7 +1775,7 @@ class Archive_Tar extends PEAR
             if ($this->_compress_type == 'gz') {
                 while (!@gzeof($v_temp_tar)) {
                     $v_buffer = @gzread($v_temp_tar, 512);
-                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) {
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
                         // do not copy end blocks, we will re-make them
                         // after appending
                         continue;
