@@ -1773,12 +1773,20 @@ class Archive_Tar extends PEAR
             }
 
             if ($this->_compress_type == 'gz') {
+                $end_blocks = 0;
+                
                 while (!@gzeof($v_temp_tar)) {
                     $v_buffer = @gzread($v_temp_tar, 512);
                     if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
+                        $end_blocks++;
                         // do not copy end blocks, we will re-make them
                         // after appending
                         continue;
+                    } elseif ($end_blocks > 0) {
+                        for ($i = 0; $i < $end_blocks; $i++) {
+                            $this->_writeBlock(ARCHIVE_TAR_END_BLOCK);
+                        }
+                        $end_blocks = 0;
                     }
                     $v_binary_data = pack("a512", $v_buffer);
                     $this->_writeBlock($v_binary_data);
@@ -1787,9 +1795,19 @@ class Archive_Tar extends PEAR
                 @gzclose($v_temp_tar);
             }
             elseif ($this->_compress_type == 'bz2') {
+                $end_blocks = 0;
+                
                 while (strlen($v_buffer = @bzread($v_temp_tar, 512)) > 0) {
-                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK) {
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
+                        $end_blocks++;
+                        // do not copy end blocks, we will re-make them
+                        // after appending
                         continue;
+                    } elseif ($end_blocks > 0) {
+                        for ($i = 0; $i < $end_blocks; $i++) {
+                            $this->_writeBlock(ARCHIVE_TAR_END_BLOCK);
+                        }
+                        $end_blocks = 0;
                     }
                     $v_binary_data = pack("a512", $v_buffer);
                     $this->_writeBlock($v_binary_data);
