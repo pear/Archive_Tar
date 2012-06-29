@@ -680,9 +680,11 @@ class Archive_Tar extends PEAR
             $this->_file = @bzopen($this->_tarname, "w");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "wb");
-        else
+        else {
             $this->_error('Unknown or missing compression type ('
 			              .$this->_compress_type.')');
+            return false;
+        }
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in write mode \''
@@ -727,15 +729,17 @@ class Archive_Tar extends PEAR
           // ----- File to open if the normal Tar file
           $v_filename = $this->_tarname;
 
-        if ($this->_compress_type == 'gz')
+        if ($this->_compress_type == 'gz' && function_exists('gzopen'))
             $this->_file = @gzopen($v_filename, "rb");
-        else if ($this->_compress_type == 'bz2')
+        else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($v_filename, "r");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($v_filename, "rb");
-        else
+        else {
             $this->_error('Unknown or missing compression type ('
 			              .$this->_compress_type.')');
+            return false;
+        }
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in read mode \''.$v_filename.'\'');
@@ -757,9 +761,11 @@ class Archive_Tar extends PEAR
             return false;
         } else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "r+b");
-        else
+        else {
             $this->_error('Unknown or missing compression type ('
 			              .$this->_compress_type.')');
+            return false;
+        }
 
         if ($this->_file == 0) {
             $this->_error('Unable to open in read/write mode \''
