@@ -1599,10 +1599,14 @@ class Archive_Tar extends PEAR
       if (($v_extract_file) && (!$v_listing))
       {
         if (($p_remove_path != '')
-            && (substr($v_header['filename'], 0, $p_remove_path_size)
-			    == $p_remove_path))
+            && (substr($v_header['filename'].'/', 0, $p_remove_path_size)
+			    == $p_remove_path)) {
           $v_header['filename'] = substr($v_header['filename'],
 		                                 $p_remove_path_size);
+          if( $v_header['filename'] == '' ){
+            continue;
+          }
+        }
         if (($p_path != './') && ($p_path != '/')) {
           while (substr($p_path, -1) == '/')
             $p_path = substr($p_path, 0, strlen($p_path)-1);
