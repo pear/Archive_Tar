@@ -407,11 +407,13 @@ class Archive_Tar extends PEAR
     *                           with the string.
     * @param string $p_string   The content of the file added in
     *                           the archive.
+    * @param int    $p_datetime A custom date/time (unix timestamp)
+    *                           for the file (optional).
     *
     * @return true on success, false on error.
     * @access public
     */
-    function addString($p_filename, $p_string)
+    function addString($p_filename, $p_string, $p_datetime = false)
     {
         $v_result = true;
 
@@ -426,7 +428,7 @@ class Archive_Tar extends PEAR
             return false;
 
         // Need to check the get back to the temporary file ? ....
-        $v_result = $this->_addString($p_filename, $p_string);
+        $v_result = $this->_addString($p_filename, $p_string, $p_datetime);
 
         $this->_writeFooter();
 
@@ -1050,7 +1052,7 @@ class Archive_Tar extends PEAR
     // }}}
 
     // {{{ _addString()
-    function _addString($p_filename, $p_string)
+    function _addString($p_filename, $p_string, $p_datetime = false)
     {
       if (!$this->_file) {
           $this->_error('Invalid file descriptor');
@@ -1064,9 +1066,14 @@ class Archive_Tar extends PEAR
 
       // ----- Calculate the stored filename
       $p_filename = $this->_translateWinPath($p_filename, false);;
+      
+      // ----- If datetime is not specified, set current time
+      if ($p_datetime === false) {
+          $p_datetime = time();
+      }
 
       if (!$this->_writeHeaderBlock($p_filename, strlen($p_string),
-	                                  time(), 384, "", 0, 0))
+                                    $p_datetime, 384, "", 0, 0))
           return false;
 
       $i=0;
