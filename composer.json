@@ -1,0 +1,28 @@
+{
+    "name": "pear/archive_tar",
+    "description": "Tar file management class",
+    "type": "library",
+    "keywords": [ "archive", "tar" ],
+    "homepage": "https://github.com/pear/Archive_Tar",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Vincent Blavet",
+            "email": "vincent@phpconcept.net"
+        },
+        {
+            "name": "Greg Beaver",
+            "email": "greg@chiaraquartet.net"
+        },
+        {
+            "name": "Michiel Rook",
+            "email": "mrook@php.net"
+        }
+    ],
+    "require": {
+        "php": ">=4.3.0"
+    },
+    "autoload": {
+        "psr-0": { "Archive_Tar": "" }
+    }
+}
