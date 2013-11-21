@@ -409,12 +409,29 @@ class Archive_Tar extends PEAR
     *                           the archive.
     * @param int    $p_datetime A custom date/time (unix timestamp)
     *                           for the file (optional).
+    * @param array  $p_params   An array of optional params:
+    *                               stamp => the datetime (replaces
+    *                                   datetime above if it exists)
+    *                               mode => the permissions on the
+    *                                   file (600 by default)
+    *                               type => is this a link?  See the
+    *                                   tar specification for details.
+    *                                   (default = regular file)
+    *                               uid => the user ID of the file
+    *                                   (default = 0 = root)
+    *                               gid => the group ID of the file
+    *                                   (default = 0 = root)
     *
     * @return true on success, false on error.
     * @access public
     */
-    function addString($p_filename, $p_string, $p_datetime = false)
+    function addString($p_filename, $p_string, $p_datetime = false, $p_params = array())
     {
+        $p_stamp = @$p_params["stamp"] ? $p_params["stamp"] : ($p_datetime ? $p_datetime : time());
+        $p_mode = @$p_params["mode"] ? $p_params["mode"] : 0600;
+        $p_type = @$p_params["type"] ? $p_params["type"] : "";
+        $p_uid = @$p_params["uid"] ? $p_params["uid"] : "";
+        $p_gid = @$p_params["gid"] ? $p_params["gid"] : "";
         $v_result = true;
 
         if (!$this->_isArchive()) {
@@ -428,7 +445,7 @@ class Archive_Tar extends PEAR
             return false;
 
         // Need to check the get back to the temporary file ? ....
-        $v_result = $this->_addString($p_filename, $p_string, $p_datetime);
+        $v_result = $this->_addString($p_filename, $p_string, $p_datetime, $p_params);
 
         $this->_writeFooter();
 
@@ -1052,8 +1069,13 @@ class Archive_Tar extends PEAR
     // }}}
 
     // {{{ _addString()
-    function _addString($p_filename, $p_string, $p_datetime = false)
+    function _addString($p_filename, $p_string, $p_datetime = false, $p_params = array())
     {
+      $p_stamp = @$p_params["stamp"] ? $p_params["stamp"] : ($p_datetime ? $p_datetime : time());
+      $p_mode = @$p_params["mode"] ? $p_params["mode"] : 0600;
+      $p_type = @$p_params["type"] ? $p_params["type"] : "";
+      $p_uid = @$p_params["uid"] ? $p_params["uid"] : 0;
+      $p_gid = @$p_params["gid"] ? $p_params["gid"] : 0;
       if (!$this->_file) {
           $this->_error('Invalid file descriptor');
           return false;
@@ -1073,7 +1095,7 @@ class Archive_Tar extends PEAR
       }
 
       if (!$this->_writeHeaderBlock($p_filename, strlen($p_string),
-                                    $p_datetime, 384, "", 0, 0))
+                                    $p_stamp, $p_mode, $p_type, $p_uid, $p_gid))
           return false;
 
       $i=0;
