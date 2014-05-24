@@ -791,7 +791,7 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "r+b");
         else if ($this->_compress_type == 'bz2') {
             $this->_error('Unable to open bz2 in read/write mode \''
-                          .$this->_tarname.'\' (limitation of bz2 extension)');
+			              .$this->_tarname.'\' (limitation of bz2 extension)');
             return false;
         } else if ($this->_compress_type == 'lzma') {
             $this->_error('Unable to open lzma in read/write mode \''
