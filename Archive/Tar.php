@@ -65,7 +65,7 @@ class Archive_Tar extends PEAR
     var $_compress=false;
 
     /**
-    * @var string Type of compression : 'none', 'gz' or 'bz2'
+    * @var string Type of compression : 'none', 'gz', 'bz2' or 'lzma'
     */
     var $_compress_type='none';
 
@@ -103,8 +103,8 @@ class Archive_Tar extends PEAR
     * gzip or bz2 compressed TAR file.
     *
     * @param string $p_tarname  The name of the tar archive to create
-    * @param string $p_compress can be null, 'gz' or 'bz2'. This
-    *               parameter indicates if gzip or bz2 compression
+    * @param string $p_compress can be null, 'gz', 'bz2' or 'lzma'. This
+    *               parameter indicates if gzip, bz2 or lzma2 compression
     *               is required.  For compatibility reason the
     *               boolean value 'true' means 'gz'.
     *
@@ -128,6 +128,9 @@ class Archive_Tar extends PEAR
                     } elseif ($data == "BZ") {
                         $this->_compress = true;
                         $this->_compress_type = 'bz2';
+                    } elseif (file_get_contents($p_tarname, false, null, 1, 4) == '7zXZ') {
+                        $this->_compress = true;
+                        $this->_compress_type = 'lzma';
                     }
                 }
             } else {
@@ -162,7 +165,7 @@ class Archive_Tar extends PEAR
             }
         }
         $this->_tarname = $p_tarname;
-        if ($this->_compress) { // assert zlib or bz2 extension support
+        if ($this->_compress) { // assert zlib or bz2 or xz extension support
             if ($this->_compress_type == 'gz')
                 $extname = 'zlib';
             else if ($this->_compress_type == 'bz2')
