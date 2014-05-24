@@ -65,7 +65,7 @@ class Archive_Tar extends PEAR
     var $_compress=false;
 
     /**
-    * @var string Type of compression : 'none', 'gz', 'bz2' or 'lzma'
+    * @var string Type of compression : 'none', 'gz', 'bz2' or 'lzma2'
     */
     var $_compress_type='none';
 
@@ -103,7 +103,7 @@ class Archive_Tar extends PEAR
     * gzip or bz2 compressed TAR file.
     *
     * @param string $p_tarname  The name of the tar archive to create
-    * @param string $p_compress can be null, 'gz', 'bz2' or 'lzma'. This
+    * @param string $p_compress can be null, 'gz', 'bz2' or 'lzma2'. This
     *               parameter indicates if gzip, bz2 or lzma2 compression
     *               is required.  For compatibility reason the
     *               boolean value 'true' means 'gz'.
@@ -130,7 +130,7 @@ class Archive_Tar extends PEAR
                         $this->_compress_type = 'bz2';
                     } elseif (file_get_contents($p_tarname, false, null, 1, 4) == '7zXZ') {
                         $this->_compress = true;
-                        $this->_compress_type = 'lzma';
+                        $this->_compress_type = 'lzma2';
                     }
                 }
             } else {
@@ -145,7 +145,7 @@ class Archive_Tar extends PEAR
                     $this->_compress_type = 'bz2';
                 } else if (substr($p_tarname, -2) == 'xz') {
                     $this->_compress = true;
-                    $this->_compress_type = 'lzma';
+                    $this->_compress_type = 'lzma2';
                 }
             }
         } else {
@@ -155,12 +155,12 @@ class Archive_Tar extends PEAR
             } else if ($p_compress == 'bz2') {
                 $this->_compress = true;
                 $this->_compress_type = 'bz2';
-            } else if ($p_compress == 'lzma') {
+            } else if ($p_compress == 'lzma2') {
                 $this->_compress = true;
-                $this->_compress_type = 'lzma';
+                $this->_compress_type = 'lzma2';
             } else {
                 $this->_error("Unsupported compression type '$p_compress'\n".
-                    "Supported types are 'gz', 'bz2' and 'lzma'.\n");
+                    "Supported types are 'gz', 'bz2' and 'lzma2'.\n");
                 return false;
             }
         }
@@ -170,7 +170,7 @@ class Archive_Tar extends PEAR
                 $extname = 'zlib';
             else if ($this->_compress_type == 'bz2')
                 $extname = 'bz2';
-            else if ($this->_compress_type == 'lzma')
+            else if ($this->_compress_type == 'lzma2')
                 $extname = 'xz';
 
             if (!extension_loaded($extname)) {
@@ -708,7 +708,7 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "wb9");
         else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($this->_tarname, "w");
-        else if ($this->_compress_type == 'lzma' && function_exists('xzopen'))
+        else if ($this->_compress_type == 'lzma2' && function_exists('xzopen'))
             $this->_file = @xzopen($this->_tarname, 'w');
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "wb");
@@ -765,7 +765,7 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($v_filename, "rb");
         else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($v_filename, "r");
-        else if ($this->_compress_type == 'lzma' && function_exists('xzopen'))
+        else if ($this->_compress_type == 'lzma2' && function_exists('xzopen'))
             $this->_file = @xzopen($v_filename, "r");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($v_filename, "rb");
@@ -793,9 +793,9 @@ class Archive_Tar extends PEAR
             $this->_error('Unable to open bz2 in read/write mode \''
 			              .$this->_tarname.'\' (limitation of bz2 extension)');
             return false;
-        } else if ($this->_compress_type == 'lzma') {
-            $this->_error('Unable to open lzma in read/write mode \''
-                          .$this->_tarname.'\' (limitation of xz extension)');
+        } else if ($this->_compress_type == 'lzma2') {
+            $this->_error('Unable to open lzma2 in read/write mode \''
+                          .$this->_tarname.'\' (limitation of lzma2 extension)');
             return false;
         } else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "r+b");
@@ -824,7 +824,7 @@ class Archive_Tar extends PEAR
                 @gzclose($this->_file);
             else if ($this->_compress_type == 'bz2')
                 @bzclose($this->_file);
-            else if ($this->_compress_type == 'lzma')
+            else if ($this->_compress_type == 'lzma2')
                 @xzclose($this->_file);
             else if ($this->_compress_type == 'none')
                 @fclose($this->_file);
@@ -875,7 +875,7 @@ class Archive_Tar extends PEAR
                   @gzputs($this->_file, $p_binary_data);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data);
-              else if ($this->_compress_type == 'lzma')
+              else if ($this->_compress_type == 'lzma2')
                   @xzwrite($this->_file, $p_binary_data);
               else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data);
@@ -887,7 +887,7 @@ class Archive_Tar extends PEAR
                   @gzputs($this->_file, $p_binary_data, $p_len);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data, $p_len);
-              else if ($this->_compress_type == 'lzma')
+              else if ($this->_compress_type == 'lzma2')
                   @xzwrite($this->_file, $p_binary_data, $p_len);
               else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data, $p_len);
@@ -910,7 +910,7 @@ class Archive_Tar extends PEAR
               $v_block = @gzread($this->_file, 512);
           else if ($this->_compress_type == 'bz2')
               $v_block = @bzread($this->_file, 512);
-          else if ($this->_compress_type == 'lzma')
+          else if ($this->_compress_type == 'lzma2')
               $v_block = @xzread($this->_file, 512);
           else if ($this->_compress_type == 'none')
               $v_block = @fread($this->_file, 512);
@@ -936,7 +936,7 @@ class Archive_Tar extends PEAR
               // ----- Replace missing bztell() and bzseek()
               for ($i=0; $i<$p_len; $i++)
                   $this->_readBlock();
-          } else if ($this->_compress_type == 'lzma') {
+          } else if ($this->_compress_type == 'lzma2') {
               // ----- Replace missing xztell() and xzseek()
               for ($i=0; $i<$p_len; $i++)
                   $this->_readBlock();
@@ -1843,7 +1843,7 @@ class Archive_Tar extends PEAR
                 $v_temp_tar = @gzopen($this->_tarname.".tmp", "rb");
             elseif ($this->_compress_type == 'bz2')
                 $v_temp_tar = @bzopen($this->_tarname.".tmp", "r");
-            elseif ($this->_compress_type == 'lzma')
+            elseif ($this->_compress_type == 'lzma2')
                 $v_temp_tar = @xzopen($this->_tarname.".tmp", "r");
 
 
@@ -1902,7 +1902,7 @@ class Archive_Tar extends PEAR
 
                 @bzclose($v_temp_tar);
             }
-            elseif ($this->_compress_type == 'lzma') {
+            elseif ($this->_compress_type == 'lzma2') {
                 $end_blocks = 0;
 
                 while (strlen($v_buffer = @xzread($v_temp_tar, 512)) > 0) {
