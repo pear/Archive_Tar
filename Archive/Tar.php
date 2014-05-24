@@ -92,7 +92,7 @@ class Archive_Tar extends PEAR
     /**
      * @var object PEAR_Error object
      */
-    var $error_object=null; 
+    var $error_object=null;
 
     // {{{ constructor
     /**
@@ -125,9 +125,6 @@ class Archive_Tar extends PEAR
                         $this->_compress = true;
                         $this->_compress_type = 'gz';
                         // No sure it's enought for a magic code ....
-                    } else if ($data = "\037\235") {
-                        $this->_compress = true;
-                        $this->_compress_type = 'lzw';
                     } elseif ($data == "BZ") {
                         $this->_compress = true;
                         $this->_compress_type = 'bz2';
@@ -791,7 +788,11 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "r+b");
         else if ($this->_compress_type == 'bz2') {
             $this->_error('Unable to open bz2 in read/write mode \''
-			              .$this->_tarname.'\' (limitation of bz2 extension)');
+                          .$this->_tarname.'\' (limitation of bz2 extension)');
+            return false;
+        } else if ($this->_compress_type == 'lzma') {
+            $this->_error('Unable to open lzma in read/write mode \''
+                          .$this->_tarname.'\' (limitation of xz extension)');
             return false;
         } else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "r+b");
@@ -930,6 +931,10 @@ class Archive_Tar extends PEAR
           }
           else if ($this->_compress_type == 'bz2') {
               // ----- Replace missing bztell() and bzseek()
+              for ($i=0; $i<$p_len; $i++)
+                  $this->_readBlock();
+          } else if ($this->_compress_type == 'lzma') {
+              // ----- Replace missing xztell() and xzseek()
               for ($i=0; $i<$p_len; $i++)
                   $this->_readBlock();
           } else if ($this->_compress_type == 'none')
@@ -1877,6 +1882,27 @@ class Archive_Tar extends PEAR
                 $end_blocks = 0;
 
                 while (strlen($v_buffer = @bzread($v_temp_tar, 512)) > 0) {
+                    if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
+                        $end_blocks++;
+                        // do not copy end blocks, we will re-make them
+                        // after appending
+                        continue;
+                    } elseif ($end_blocks > 0) {
+                        for ($i = 0; $i < $end_blocks; $i++) {
+                            $this->_writeBlock(ARCHIVE_TAR_END_BLOCK);
+                        }
+                        $end_blocks = 0;
+                    }
+                    $v_binary_data = pack("a512", $v_buffer);
+                    $this->_writeBlock($v_binary_data);
+                }
+
+                @bzclose($v_temp_tar);
+            }
+            elseif ($this->_compress_type == 'lzma') {
+                $end_blocks = 0;
+
+                while (strlen($v_buffer = @xzread($v_temp_tar, 512)) > 0) {
                     if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
                         $end_blocks++;
                         // do not copy end blocks, we will re-make them
