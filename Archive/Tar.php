@@ -125,6 +125,9 @@ class Archive_Tar extends PEAR
                         $this->_compress = true;
                         $this->_compress_type = 'gz';
                         // No sure it's enought for a magic code ....
+                    } else if ($data = "\037\235") {
+                        $this->_compress = true;
+                        $this->_compress_type = 'lzw';
                     } elseif ($data == "BZ") {
                         $this->_compress = true;
                         $this->_compress_type = 'bz2';
@@ -140,6 +143,9 @@ class Archive_Tar extends PEAR
                           (substr($p_tarname, -2) == 'bz')) {
                     $this->_compress = true;
                     $this->_compress_type = 'bz2';
+                } else if (substr($p_tarname, -2) == 'xz') {
+                    $this->_compress = true;
+                    $this->_compress_type = 'lzma';
                 }
             }
         } else {
@@ -149,9 +155,12 @@ class Archive_Tar extends PEAR
             } else if ($p_compress == 'bz2') {
                 $this->_compress = true;
                 $this->_compress_type = 'bz2';
+            } else if ($p_compress == 'lzma') {
+                $this->_compress = true;
+                $this->_compress_type = 'lzma';
             } else {
                 $this->_error("Unsupported compression type '$p_compress'\n".
-                    "Supported types are 'gz' and 'bz2'.\n");
+                    "Supported types are 'gz', 'bz2' and 'lzma'.\n");
                 return false;
             }
         }
@@ -161,6 +170,8 @@ class Archive_Tar extends PEAR
                 $extname = 'zlib';
             else if ($this->_compress_type == 'bz2')
                 $extname = 'bz2';
+            else if ($this->_compress_type == 'lzma')
+                $extname = 'xz';
 
             if (!extension_loaded($extname)) {
                 PEAR::loadExtension($extname);
@@ -668,14 +679,14 @@ class Archive_Tar extends PEAR
     // {{{ _error()
     function _error($p_message)
     {
-        $this->error_object = &$this->raiseError($p_message); 
+        $this->error_object = &$this->raiseError($p_message);
     }
     // }}}
 
     // {{{ _warning()
     function _warning($p_message)
     {
-        $this->error_object = &$this->raiseError($p_message); 
+        $this->error_object = &$this->raiseError($p_message);
     }
     // }}}
 
@@ -697,6 +708,8 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($this->_tarname, "wb9");
         else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($this->_tarname, "w");
+        else if ($this->_compress_type == 'lzma' && function_exists('xzopen'))
+            $this->_file = @xzopen($this->_tarname, 'w');
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($this->_tarname, "wb");
         else {
@@ -752,6 +765,8 @@ class Archive_Tar extends PEAR
             $this->_file = @gzopen($v_filename, "rb");
         else if ($this->_compress_type == 'bz2' && function_exists('bzopen'))
             $this->_file = @bzopen($v_filename, "r");
+        else if ($this->_compress_type == 'lzma' && function_exists('xzopen'))
+            $this->_file = @xzopen($v_filename, "r");
         else if ($this->_compress_type == 'none')
             $this->_file = @fopen($v_filename, "rb");
         else {
@@ -805,6 +820,8 @@ class Archive_Tar extends PEAR
                 @gzclose($this->_file);
             else if ($this->_compress_type == 'bz2')
                 @bzclose($this->_file);
+            else if ($this->_compress_type == 'lzma')
+                @xzclose($this->_file);
             else if ($this->_compress_type == 'none')
                 @fclose($this->_file);
             else
@@ -854,6 +871,8 @@ class Archive_Tar extends PEAR
                   @gzputs($this->_file, $p_binary_data);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data);
+              else if ($this->_compress_type == 'lzma')
+                  @xzwrite($this->_file, $p_binary_data);
               else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data);
               else
@@ -864,6 +883,8 @@ class Archive_Tar extends PEAR
                   @gzputs($this->_file, $p_binary_data, $p_len);
               else if ($this->_compress_type == 'bz2')
                   @bzwrite($this->_file, $p_binary_data, $p_len);
+              else if ($this->_compress_type == 'lzma')
+                  @xzwrite($this->_file, $p_binary_data, $p_len);
               else if ($this->_compress_type == 'none')
                   @fputs($this->_file, $p_binary_data, $p_len);
               else
@@ -885,6 +906,8 @@ class Archive_Tar extends PEAR
               $v_block = @gzread($this->_file, 512);
           else if ($this->_compress_type == 'bz2')
               $v_block = @bzread($this->_file, 512);
+          else if ($this->_compress_type == 'lzma')
+              $v_block = @xzread($this->_file, 512);
           else if ($this->_compress_type == 'none')
               $v_block = @fread($this->_file, 512);
           else
@@ -1096,7 +1119,7 @@ class Archive_Tar extends PEAR
 
       // ----- Calculate the stored filename
       $p_filename = $this->_translateWinPath($p_filename, false);;
-      
+
       // ----- If datetime is not specified, set current time
       if ($p_datetime === false) {
           $p_datetime = time();
@@ -1153,12 +1176,12 @@ class Archive_Tar extends PEAR
         $v_magic = 'ustar ';
 
         $v_version = ' ';
-        
+
         if (function_exists('posix_getpwuid'))
         {
           $userinfo = posix_getpwuid($v_info[4]);
           $groupinfo = posix_getgrgid($v_info[5]);
-          
+
           $v_uname = $userinfo['name'];
           $v_gname = $groupinfo['name'];
         }
@@ -1242,7 +1265,7 @@ class Archive_Tar extends PEAR
         {
           $userinfo = posix_getpwuid($p_uid);
           $groupinfo = posix_getgrgid($p_gid);
-          
+
           $v_uname = $userinfo['name'];
           $v_gname = $groupinfo['name'];
         }
@@ -1251,7 +1274,7 @@ class Archive_Tar extends PEAR
           $v_uname = '';
           $v_gname = '';
         }
-        
+
         $v_devmajor = '';
 
         $v_devminor = '';
@@ -1726,7 +1749,7 @@ class Archive_Tar extends PEAR
             }
 
             @fclose($v_dest_file);
-            
+
             if ($p_preserve) {
                 @chown($v_header['filename'], $v_header['uid']);
                 @chgrp($v_header['filename'], $v_header['gid']);
@@ -1748,7 +1771,7 @@ class Archive_Tar extends PEAR
                             .'does not exist. Archive may be corrupted.');
               return false;
           }
-          
+
           $filesize = filesize($v_header['filename']);
           if ($filesize != $v_header['size']) {
               $this->_error('Extracted file '.$v_header['filename']
@@ -1812,6 +1835,9 @@ class Archive_Tar extends PEAR
                 $v_temp_tar = @gzopen($this->_tarname.".tmp", "rb");
             elseif ($this->_compress_type == 'bz2')
                 $v_temp_tar = @bzopen($this->_tarname.".tmp", "r");
+            elseif ($this->_compress_type == 'lzma')
+                $v_temp_tar = @xzopen($this->_tarname.".tmp", "r");
+
 
             if ($v_temp_tar == 0) {
                 $this->_error('Unable to open file \''.$this->_tarname
@@ -1827,7 +1853,7 @@ class Archive_Tar extends PEAR
 
             if ($this->_compress_type == 'gz') {
                 $end_blocks = 0;
-                
+
                 while (!@gzeof($v_temp_tar)) {
                     $v_buffer = @gzread($v_temp_tar, 512);
                     if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
@@ -1849,7 +1875,7 @@ class Archive_Tar extends PEAR
             }
             elseif ($this->_compress_type == 'bz2') {
                 $end_blocks = 0;
-                
+
                 while (strlen($v_buffer = @bzread($v_temp_tar, 512)) > 0) {
                     if ($v_buffer == ARCHIVE_TAR_END_BLOCK || strlen($v_buffer) == 0) {
                         $end_blocks++;
@@ -1991,11 +2017,11 @@ class Archive_Tar extends PEAR
                 }
             }
         }
-        
+
         if (defined('OS_WINDOWS') && OS_WINDOWS) {
             $v_result = strtr($v_result, '\\', '/');
         }
-        
+
         return $v_result;
     }
 
