@@ -1921,7 +1921,7 @@ class Archive_Tar extends PEAR
                     $this->_writeBlock($v_binary_data);
                 }
 
-                @bzclose($v_temp_tar);
+                @xzclose($v_temp_tar);
             }
 
             if (!@unlink($this->_tarname.".tmp")) {
