@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": ">=4.3.0",
-        "pear/pear_exception": "*"
+        "pear/pear_exception": "1.0-beta1"
     },
     "suggest": {
         "ext-zlib": "Gzip compression support.",
