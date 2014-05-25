@@ -26,6 +26,11 @@
         "php": ">=4.3.0",
         "pear/pear_exception": "*"
     },
+    "suggest": {
+        "ext-zlib": "Gzip compression support.",
+        "ext-bz2": "bz2 compression support.",
+        "ext-xz": "lzma2 compression support."
+    },
     "autoload": {
         "psr-0": {
             "Archive_Tar": ""
