@@ -1906,6 +1906,12 @@ class Archive_Tar extends PEAR
                 }
             }
 
+            // ignore extended / pax headers
+            if ($v_header['typeflag'] == 'x' || $v_header['typeflag'] == 'g') {
+                $this->_jumpBlock(ceil(($v_header['size'] / 512)));
+                continue;
+            }
+
             if ((!$v_extract_all) && (is_array($p_file_list))) {
                 // ----- By default no unzip if the file is not found
                 $v_extract_file = false;
