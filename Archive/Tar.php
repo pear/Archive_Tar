@@ -112,7 +112,9 @@ class Archive_Tar extends PEAR
      */
     function Archive_Tar($p_tarname, $p_compress = null)
     {
-        $this->PEAR();
+        if (version_compare(PHP_VERSION, '5.0.0', '<')) {
+            $this->PEAR();
+        }
         $this->_compress = false;
         $this->_compress_type = 'none';
         if (($p_compress === null) || ($p_compress == '')) {
@@ -212,6 +214,14 @@ class Archive_Tar extends PEAR
             @unlink($this->_temp_tarname);
         }
         $this->_PEAR();
+    }
+
+    // }}}
+
+    // {{{ PHP5-compatible destructor
+    function __destruct()
+    {
+        $this->_Archive_Tar();
     }
 
     // }}}
