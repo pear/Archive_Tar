@@ -710,7 +710,7 @@ class Archive_Tar extends PEAR
                     break;
 
                 default :
-                    $this->_error('Unknow attribute code ' . $v_att_list[$i] . '');
+                    $this->_error('Unknown attribute code ' . $v_att_list[$i] . '');
                     return false;
             }
 
