@@ -6,12 +6,6 @@
         "archive",
         "tar"
     ],
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "http://pear.imagineeasy.com"
-        }
-    ],
     "homepage": "https://github.com/pear/Archive_Tar",
     "license": "BSD-3-Clause",
     "authors": [
@@ -30,8 +24,7 @@
     ],
     "require": {
         "php": ">=4.3.0",
-        "pear/pear": "dev-master",
-        "pear/pear_exception": "1.0-beta1"
+        "pear/pear-core-minimal": "^1.9.5",
     },
     "suggest": {
         "ext-zlib": "Gzip compression support.",
@@ -52,6 +45,5 @@
     },
     "require-dev": {
         "phpunit/phpunit": "*"
-    },
-    "minimum-stability": "dev"
+    }
 }
