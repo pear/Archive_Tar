@@ -1754,9 +1754,8 @@ class Archive_Tar extends PEAR
      * @param string $file
      *
      * @return bool
-     * @access private
      */
-    public function _maliciousFilename($file)
+    private function _maliciousFilename($file)
     {
         if (strpos($file, '/../') !== false) {
             return true;
@@ -1814,9 +1813,8 @@ class Archive_Tar extends PEAR
      * @param string $p_filename The path of the file to extract in a string.
      *
      * @return a string with the file content or null.
-     * @access private
      */
-    public function _extractInString($p_filename)
+    private function _extractInString($p_filename)
     {
         $v_result_str = "";
 
@@ -2347,11 +2345,8 @@ class Archive_Tar extends PEAR
      * @param string $p_dir path to reduce
      *
      * @return string reduced path
-     *
-     * @access private
-     *
      */
-    public function _pathReduction($p_dir)
+    private function _pathReduction($p_dir)
     {
         $v_result = '';
 
