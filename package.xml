@@ -83,6 +83,7 @@ loaded. Bz2 compression is also supported with the bz2 extension loaded.</descri
     <release>stable</release>
     <api>stable</api>
    </stability>
+   <date>2015-02-26</date>
    <license uri="http://www.opensource.org/licenses/bsd-license.php">New BSD License</license>
    <notes>
 * Fix Bug #18505: Possible incorrect handling of file names in TAR [mrook]
