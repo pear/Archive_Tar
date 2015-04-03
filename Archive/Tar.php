@@ -130,11 +130,10 @@ class Archive_Tar extends PEAR
      *
      * @return bool
      */
-    public function Archive_Tar($p_tarname, $p_compress = null)
+    public function __construct($p_tarname, $p_compress = null)
     {
-        if (version_compare(PHP_VERSION, '5.0.0', '<')) {
-            $this->PEAR();
-        }
+        parent::__construct();
+        
         $this->_compress = false;
         $this->_compress_type = 'none';
         if (($p_compress === null) || ($p_compress == '')) {
@@ -223,19 +222,13 @@ class Archive_Tar extends PEAR
         }
     }
 
-    public function _Archive_Tar()
+    public function __destruct()
     {
         $this->_close();
         // ----- Look for a local copy to delete
         if ($this->_temp_tarname != '') {
             @unlink($this->_temp_tarname);
         }
-        $this->_PEAR();
-    }
-
-    public function __destruct()
-    {
-        $this->_Archive_Tar();
     }
 
     /**
