@@ -5,7 +5,7 @@ test symbolic links
 <?php
 require_once dirname(__FILE__) . '/setup.php.inc';
 $me = dirname(__FILE__) . '/testit';
-$tar = &new Archive_Tar(dirname(__FILE__) . '/testsymlink.tar');
+$tar = new Archive_Tar(dirname(__FILE__) . '/testsymlink.tar');
 $tar->extract();
 $phpunit->assertNoErrors('after');
 $phpunit->assertFileExists('testme', 'dir');
