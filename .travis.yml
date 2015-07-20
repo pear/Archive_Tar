@@ -11,6 +11,5 @@ php:
 matrix:
   fast_finish: true
   allow_failures:
-    - php: 7
     - php: hhvm
 script: ./.travis.sh 
