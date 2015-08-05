@@ -23,8 +23,8 @@
         }
     ],
     "require": {
-        "php": ">=4.3.0",
-        "pear/pear-core-minimal": "^1.9.5"
+        "php": ">=5.2.0",
+        "pear/pear-core-minimal": "^1.10.0alpha2"
     },
     "suggest": {
         "ext-zlib": "Gzip compression support.",
