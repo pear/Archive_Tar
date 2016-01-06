@@ -116,6 +116,12 @@ class Archive_Tar extends PEAR
     public $error_object = null;
 
     /**
+     * Format for data extraction
+     *
+     * @var string
+     */
+    public $_fmt ='';
+    /**
      * Archive_Tar Class constructor. This flavour of the constructor only
      * declare a new Archive_Tar object, identifying it by the name of the
      * tar file.
@@ -220,6 +226,19 @@ class Archive_Tar extends PEAR
                 return false;
             }
         }
+
+
+        if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
+            $this->_fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
+                   "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
+                   "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
+        } else {
+            $this->_fmt = "Z100filename/Z8mode/Z8uid/Z8gid/Z12size/Z12mtime/" .
+                   "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
+                   "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
+        }
+
+        
     }
 
     public function __destruct()
@@ -1652,16 +1671,8 @@ class Archive_Tar extends PEAR
             $v_checksum += ord(substr($v_binary_data, $i, 1));
         }
 
-        if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
-            $fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
-                "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
-                "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
-        } else {
-            $fmt = "Z100filename/Z8mode/Z8uid/Z8gid/Z12size/Z12mtime/" .
-                "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
-                "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
-        }
-        $v_data = unpack($fmt, $v_binary_data);
+
+        $v_data = unpack($this->_fmt, $v_binary_data);
 
         if (strlen($v_data["prefix"]) > 0) {
             $v_data["filename"] = "$v_data[prefix]/$v_data[filename]";
