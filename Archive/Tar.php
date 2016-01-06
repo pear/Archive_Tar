@@ -1659,17 +1659,10 @@ class Archive_Tar extends PEAR
         // ----- Calculate the checksum
         $v_checksum = 0;
         // ..... First part of the header
-        for ($i = 0; $i < 148; $i++) {
-            $v_checksum += ord(substr($v_binary_data, $i, 1));
-        }
-        // ..... Ignore the checksum value and replace it by ' ' (space)
-        for ($i = 148; $i < 156; $i++) {
-            $v_checksum += ord(' ');
-        }
-        // ..... Last part of the header
-        for ($i = 156; $i < 512; $i++) {
-            $v_checksum += ord(substr($v_binary_data, $i, 1));
-        }
+        $v_binary_split = str_split($v_binary_data);
+        $v_checksum += array_sum(array_map('ord', array_slice($v_binary_split, 0, 148)));
+        $v_checksum += array_sum(array_map('ord', array(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',)));
+        $v_checksum += array_sum(array_map('ord', array_slice($v_binary_split, 156, 512)));
 
 
         $v_data = unpack($this->_fmt, $v_binary_data);
