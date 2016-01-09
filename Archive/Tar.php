@@ -116,6 +116,12 @@ class Archive_Tar extends PEAR
     public $error_object = null;
 
     /**
+     * Format for data extraction
+     *
+     * @var string
+     */
+    public $_fmt ='';
+    /**
      * Archive_Tar Class constructor. This flavour of the constructor only
      * declare a new Archive_Tar object, identifying it by the name of the
      * tar file.
@@ -220,6 +226,19 @@ class Archive_Tar extends PEAR
                 return false;
             }
         }
+
+
+        if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
+            $this->_fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
+                   "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
+                   "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
+        } else {
+            $this->_fmt = "Z100filename/Z8mode/Z8uid/Z8gid/Z12size/Z12mtime/" .
+                   "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
+                   "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
+        }
+
+        
     }
 
     public function __destruct()
@@ -1640,28 +1659,13 @@ class Archive_Tar extends PEAR
         // ----- Calculate the checksum
         $v_checksum = 0;
         // ..... First part of the header
-        for ($i = 0; $i < 148; $i++) {
-            $v_checksum += ord(substr($v_binary_data, $i, 1));
-        }
-        // ..... Ignore the checksum value and replace it by ' ' (space)
-        for ($i = 148; $i < 156; $i++) {
-            $v_checksum += ord(' ');
-        }
-        // ..... Last part of the header
-        for ($i = 156; $i < 512; $i++) {
-            $v_checksum += ord(substr($v_binary_data, $i, 1));
-        }
+        $v_binary_split = str_split($v_binary_data);
+        $v_checksum += array_sum(array_map('ord', array_slice($v_binary_split, 0, 148)));
+        $v_checksum += array_sum(array_map('ord', array(' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',)));
+        $v_checksum += array_sum(array_map('ord', array_slice($v_binary_split, 156, 512)));
 
-        if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
-            $fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
-                "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
-                "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
-        } else {
-            $fmt = "Z100filename/Z8mode/Z8uid/Z8gid/Z12size/Z12mtime/" .
-                "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
-                "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
-        }
-        $v_data = unpack($fmt, $v_binary_data);
+
+        $v_data = unpack($this->_fmt, $v_binary_data);
 
         if (strlen($v_data["prefix"]) > 0) {
             $v_data["filename"] = "$v_data[prefix]/$v_data[filename]";
