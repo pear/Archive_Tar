@@ -39,7 +39,11 @@
  * @link      http://pear.php.net/package/Archive_Tar
  */
 
-require_once 'PEAR.php';
+// If the PEAR class cannot be loaded via the autoloader,
+// then try to require_once it from the PHP include path.
+if (!class_exists('PEAR')) {
+    require_once 'PEAR.php';
+}
 
 define('ARCHIVE_TAR_ATT_SEPARATOR', 90001);
 define('ARCHIVE_TAR_END_BLOCK', pack("a512", ''));
@@ -139,7 +143,7 @@ class Archive_Tar extends PEAR
     public function __construct($p_tarname, $p_compress = null)
     {
         parent::__construct();
-        
+
         $this->_compress = false;
         $this->_compress_type = 'none';
         if (($p_compress === null) || ($p_compress == '')) {
@@ -238,7 +242,7 @@ class Archive_Tar extends PEAR
                    "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
         }
 
-        
+
     }
 
     public function __destruct()
