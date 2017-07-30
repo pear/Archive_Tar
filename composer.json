@@ -1,6 +1,6 @@
 {
     "name": "pear/archive_tar",
-    "description": "Tar file management class",
+    "description": "Tar file management class with compression support (gzip, bzip2, lzma2)",
     "type": "library",
     "keywords": [
         "archive",
