@@ -1,6 +1,6 @@
 {
     "name": "pear/archive_tar",
-    "description": "Tar file management class",
+    "description": "Tar file management class with compression support (gzip, bzip2, lzma2)",
     "type": "library",
     "keywords": [
         "archive",
@@ -28,8 +28,8 @@
     },
     "suggest": {
         "ext-zlib": "Gzip compression support.",
-        "ext-bz2": "bz2 compression support.",
-        "ext-xz": "lzma2 compression support."
+        "ext-bz2": "Bz2 compression support.",
+        "ext-xz": "Lzma2 compression support."
     },
     "autoload": {
         "psr-0": {

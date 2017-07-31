@@ -7,6 +7,7 @@ This package provides handling of tar files in PHP.
 It supports creating, listing, extracting and adding to tar files.
 Gzip support is available if PHP has the zlib extension built-in or
 loaded. Bz2 compression is also supported with the bz2 extension loaded.
+Also Lzma2 compressed archives are supported with xz extension.
 
 This package is hosted at http://pear.php.net/package/Archive_Tar
 
