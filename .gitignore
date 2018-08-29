@@ -4,3 +4,7 @@ composer.phar
 vendor
 # IDE
 .idea
+# eclipse
+.buildpath
+.project
+.settings
