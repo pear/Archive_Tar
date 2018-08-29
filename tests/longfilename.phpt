@@ -22,8 +22,9 @@ echo 'tests done';
 ?>
 --CLEAN--
 <?php
-@unlink('testlongfilename.tar');
-system('rm -r longfilenamedir');
+$dirname = dirname(__FILE__);
+unlink($dirname . '/testlongfilename.tar');
+system("rm -r $dirname/longfilenamedir");
 ?>
 --EXPECT--
 tests done
