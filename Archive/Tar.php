@@ -1567,26 +1567,17 @@ class Archive_Tar extends PEAR
      */
     public function _writeLongHeader($p_filename, $is_link = false)
     {
-        $v_info = lstat($p_filename);
         $v_uid = sprintf("%07s", 0);
         $v_gid = sprintf("%07s", 0);
-        $v_perms = sprintf("%07s", DecOct($v_info['mode'] & 000777));
+        $v_perms = sprintf("%07s", 0);
         $v_size = sprintf("%'011s", DecOct(strlen($p_filename)));
         $v_mtime = sprintf("%011s", 0);
         $v_typeflag = ($is_link ? 'K' : 'L');
         $v_linkname = '';
         $v_magic = 'ustar ';
         $v_version = ' ';
-        if (function_exists('posix_getpwuid')) {
-            $userinfo = posix_getpwuid($v_info[4]);
-            $groupinfo = posix_getgrgid($v_info[5]);
-
-            $v_uname = $userinfo['name'];
-            $v_gname = $groupinfo['name'];
-        } else {
-            $v_uname = '';
-            $v_gname = '';
-        }
+        $v_uname = '';
+        $v_gname = '';
         $v_devmajor = '';
         $v_devminor = '';
         $v_prefix = '';
