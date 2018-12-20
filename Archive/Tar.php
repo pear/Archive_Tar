@@ -1767,6 +1767,9 @@ class Archive_Tar extends PEAR
      */
     private function _maliciousFilename($file)
     {
+        if (strpos($file, 'phar://') === 0) {
+            return true;
+        }
         if (strpos($file, '/../') !== false) {
             return true;
         }
