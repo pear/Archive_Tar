@@ -20,7 +20,7 @@ matrix:
     dist: trusty
 install:
   - pear upgrade --force --alldeps pear/pear
-  - pear install package.xml
+  - pear install -f package.xml
 script:
   - pear run-tests -qr tests/
   - for i in `find tests/ -name '*.out'`; do echo "$i"; cat "$i"; done
