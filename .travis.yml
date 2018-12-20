@@ -18,6 +18,8 @@ matrix:
     dist: trusty
   - php: 7.2
     dist: trusty
+  - php: 7.3
+    dist: trusty
 install:
   - pear upgrade --force --alldeps pear/pear
   - pear install -f package.xml
