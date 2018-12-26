@@ -1346,6 +1346,11 @@ class Archive_Tar extends PEAR
             }
         }
 
+        $v_linkname = '';
+        if (@is_link($p_filename)) {
+            $v_linkname = readlink($p_filename);
+        }
+
         if (strlen($v_linkname) > 99) {
             if (!$this->_writeLongHeader($v_linkname, true)) {
                 return false;
@@ -1358,7 +1363,7 @@ class Archive_Tar extends PEAR
         $v_perms = sprintf("%07s", DecOct($v_info['mode'] & 000777));
         $v_mtime = sprintf("%011s", DecOct($v_info['mtime']));
 
-        if ($v_linkname !== '') {
+        if (@is_link($p_filename)) {
             $v_typeflag = '2';
             $v_size = sprintf("%011s", DecOct(0));
         } elseif (@is_dir($p_filename)) {
