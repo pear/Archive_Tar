@@ -1338,13 +1338,6 @@ class Archive_Tar extends PEAR
             $p_stored_filename = $p_filename;
         }
 
-        $v_linkname = '';
-        $v_reduced_linkname = '';
-        if (@is_link($p_filename)) {
-            $v_linkname = readlink($p_filename);
-            $v_reduced_linkname = $this->_pathReduction($v_linkname);
-        }
-
         $v_reduced_filename = $this->_pathReduction($p_stored_filename);
 
         if (strlen($v_reduced_filename) > 99) {
@@ -1353,8 +1346,13 @@ class Archive_Tar extends PEAR
             }
         }
 
-        if (strlen($v_reduced_linkname) > 99) {
-            if (!$this->_writeLongHeader($v_reduced_linkname, true)) {
+        $v_linkname = '';
+        if (@is_link($p_filename)) {
+            $v_linkname = readlink($p_filename);
+        }
+
+        if (strlen($v_linkname) > 99) {
+            if (!$this->_writeLongHeader($v_linkname, true)) {
                 return false;
             }
         }
@@ -1365,7 +1363,7 @@ class Archive_Tar extends PEAR
         $v_perms = sprintf("%07s", DecOct($v_info['mode'] & 000777));
         $v_mtime = sprintf("%011s", DecOct($v_info['mtime']));
 
-        if ($v_linkname !== '') {
+        if (@is_link($p_filename)) {
             $v_typeflag = '2';
             $v_size = sprintf("%011s", DecOct(0));
         } elseif (@is_dir($p_filename)) {
@@ -1407,7 +1405,7 @@ class Archive_Tar extends PEAR
         $v_binary_data_last = pack(
             "a1a100a6a2a32a32a8a8a155a12",
             $v_typeflag,
-            $v_reduced_linkname,
+            $v_linkname,
             $v_magic,
             $v_version,
             $v_uname,
