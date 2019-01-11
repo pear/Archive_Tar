@@ -1770,11 +1770,8 @@ class Archive_Tar extends PEAR
         if (strpos($file, 'phar://') === 0) {
             return true;
         }
-        if (strpos($file, DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR) !== false) {
-            return true;
-        }
-        if (strpos($file, '..' . DIRECTORY_SEPARATOR) === 0) {
-            return true;
+        if (strpos($file, '../') !== false || strpos($file, '..\\') !== false) {
+                return true;
         }
         return false;
     }
