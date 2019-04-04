@@ -124,7 +124,7 @@ class Archive_Tar extends PEAR
      *
      * @var string
      */
-    public $_fmt ='';
+    public $_fmt = '';
 
     /**
      * @var int Length of the read buffer in bytes
@@ -241,12 +241,12 @@ class Archive_Tar extends PEAR
 
         if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
             $this->_fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
-                   "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
-                   "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
+                "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
+                "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
         } else {
             $this->_fmt = "Z100filename/Z8mode/Z8uid/Z8gid/Z12size/Z12mtime/" .
-                   "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
-                   "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
+                "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
+                "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
         }
 
 
@@ -1267,13 +1267,10 @@ class Archive_Tar extends PEAR
 
             while (($v_buffer = fread($v_file, $this->buffer_length)) != '') {
                 $buffer_length = strlen("$v_buffer");
-                if ($buffer_length != $this->buffer_length)
-                {
+                if ($buffer_length != $this->buffer_length) {
                     $pack_size = ((int)($buffer_length / 512) + 1) * 512;
                     $pack_format = sprintf('a%d', $pack_size);
-                }
-                else
-                {
+                } else {
                     $pack_format = sprintf('a%d', $this->buffer_length);
                 }
                 $v_binary_data = pack($pack_format, "$v_buffer");
@@ -1481,7 +1478,8 @@ class Archive_Tar extends PEAR
         $p_type = '',
         $p_uid = 0,
         $p_gid = 0
-    ) {
+    )
+    {
         $p_filename = $this->_pathReduction($p_filename);
 
         if (strlen($p_filename) > 99) {
@@ -1789,7 +1787,7 @@ class Archive_Tar extends PEAR
             return true;
         }
         if (strpos($file, '../') !== false || strpos($file, '..\\') !== false) {
-                return true;
+            return true;
         }
         return false;
     }
@@ -1854,19 +1852,23 @@ class Archive_Tar extends PEAR
             }
 
             switch ($v_header['typeflag']) {
-                case 'L': {
-                    if (!$this->_readLongHeader($v_header)) {
-                        return null;
+                case 'L':
+                    {
+                        if (!$this->_readLongHeader($v_header)) {
+                            return null;
+                        }
                     }
-                } break;
+                    break;
 
-                case 'K': {
-                    $v_link_header = $v_header;
-                    if (!$this->_readLongHeader($v_link_header)) {
-                        return null;
+                case 'K':
+                    {
+                        $v_link_header = $v_header;
+                        if (!$this->_readLongHeader($v_link_header)) {
+                            return null;
+                        }
+                        $v_header['link'] = $v_link_header['filename'];
                     }
-                    $v_header['link'] = $v_link_header['filename'];
-                } break;
+                    break;
             }
 
             if ($v_header['filename'] == $p_filename) {
@@ -1915,7 +1917,8 @@ class Archive_Tar extends PEAR
         $p_file_list,
         $p_remove_path,
         $p_preserve = false
-    ) {
+    )
+    {
         $v_result = true;
         $v_nb = 0;
         $v_extract_all = true;
@@ -1968,19 +1971,23 @@ class Archive_Tar extends PEAR
             }
 
             switch ($v_header['typeflag']) {
-                case 'L': {
-                    if (!$this->_readLongHeader($v_header)) {
-                        return null;
+                case 'L':
+                    {
+                        if (!$this->_readLongHeader($v_header)) {
+                            return null;
+                        }
                     }
-                } break;
+                    break;
 
-                case 'K': {
-                    $v_link_header = $v_header;
-                    if (!$this->_readLongHeader($v_link_header)) {
-                        return null;
+                case 'K':
+                    {
+                        $v_link_header = $v_header;
+                        if (!$this->_readLongHeader($v_link_header)) {
+                            return null;
+                        }
+                        $v_header['link'] = $v_link_header['filename'];
                     }
-                    $v_header['link'] = $v_link_header['filename'];
-                } break;
+                    break;
             }
 
             // ignore extended / pax headers
