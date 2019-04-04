@@ -125,6 +125,12 @@ class Archive_Tar extends PEAR
      * @var string
      */
     public $_fmt ='';
+
+    /**
+     * @var int Length of the read buffer in bytes
+     */
+    protected $length;
+
     /**
      * Archive_Tar Class constructor. This flavour of the constructor only
      * declare a new Archive_Tar object, identifying it by the name of the
@@ -137,10 +143,11 @@ class Archive_Tar extends PEAR
      *               parameter indicates if gzip, bz2 or lzma2 compression
      *               is required.  For compatibility reason the
      *               boolean value 'true' means 'gz'.
+     * @param int $length value to set to the {@link length} attribute
      *
      * @return bool
      */
-    public function __construct($p_tarname, $p_compress = null)
+    public function __construct($p_tarname, $p_compress = null, $length = 512)
     {
         parent::__construct();
 
@@ -243,6 +250,7 @@ class Archive_Tar extends PEAR
         }
 
 
+        $this->length = $length;
     }
 
     public function __destruct()
@@ -1257,10 +1265,20 @@ class Archive_Tar extends PEAR
                 return false;
             }
 
-            while (($v_buffer = fread($v_file, 512)) != '') {
-                $v_binary_data = pack("a512", "$v_buffer");
-                $this->_writeBlock($v_binary_data);
-            }
+	        while (($v_buffer = fread($v_file, $this->length)) != '') {
+		        $buffer_length = strlen("$v_buffer");
+		        if ($buffer_length != $this->length)
+		        {
+			        $pack_size = ((int)($buffer_length / 512) + 1) * 512;
+			        $pack_format = sprintf('a%d', $pack_size);
+		        }
+		        else
+		        {
+			        $pack_format = sprintf('a%d', $this->length);
+		        }
+		        $v_binary_data = pack($pack_format, "$v_buffer");
+		        $this->_writeBlock($v_binary_data);
+	        }
 
             fclose($v_file);
         } else {
