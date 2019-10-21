@@ -1692,7 +1692,16 @@ class Archive_Tar extends PEAR
         }
 
         // ----- Extract the checksum
-        $v_header['checksum'] = OctDec(trim($v_data['checksum']));
+        $v_data_checksum = trim($v_data['checksum']);
+        if (!preg_match('/^[0-7]*$/', $v_data_checksum)) {
+            $this->_error(
+                'Invalid checksum for file "' . $v_data['filename']
+                . '" : ' . $v_data_checksum . ' extracted'
+            );
+            return false;
+        }
+
+        $v_header['checksum'] = OctDec($v_data_checksum);
         if ($v_header['checksum'] != $v_checksum) {
             $v_header['filename'] = '';
 
