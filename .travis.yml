@@ -32,5 +32,6 @@ install:
 #  - pear upgrade --force --alldeps pear/pear
   - pear install -f package.xml
 script:
+  - pear version
   - pear run-tests -qr tests/
   - for i in `find tests/ -name '*.out'`; do echo "$i"; cat "$i"; done
