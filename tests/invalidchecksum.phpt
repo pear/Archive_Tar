@@ -5,7 +5,7 @@ test saving of dead symbolic links
 <?php
 require_once dirname(__FILE__) . '/setup.php.inc';
 
-$tar1 = new Archive_Tar('text-0.txt');
+$tar1 = new Archive_Tar(dirname(__FILE__) . '/text-0.txt');
 $tar1->listContent();
 
 $phpunit->assertErrors(array(
