@@ -1692,7 +1692,14 @@ class Archive_Tar extends PEAR
         }
 
         // ----- Extract the checksum
-        $v_header['checksum'] = OctDec(trim($v_data['checksum']));
+        $v_data_checksum = trim($v_data['checksum']);
+        if (preg_match('/^[0-7]*$/', $v_data_checksum)) {
+            $v_header['checksum'] = OctDec($v_data_checksum);
+        }
+        else {
+            // ..... There is no checksum, this file is probably not a tar file
+            $v_header['checksum'] = '';
+        }
         if ($v_header['checksum'] != $v_checksum) {
             $v_header['filename'] = '';
 
