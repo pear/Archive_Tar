@@ -7,12 +7,12 @@ require_once dirname(__FILE__) . '/setup.php.inc';
 $me = dirname(__FILE__) . '/testit';
 $tar = new Archive_Tar(dirname(__FILE__) . '/testsymlink.tar');
 $tar->extract('', false, false);
-$phpunit->assertErrors([
-    [
+$phpunit->assertErrors(array(
+    array(
         'package' => 'PEAR_Error',
         'message' => 'Symbolic links are not allowed. Unable to extract {testme/symlink.txt}'
-    ],
-], 'Warning thrown');
+    ),
+), 'Warning thrown');
 $phpunit->assertFileExists('testme', 'dir');
 $phpunit->assertFileNotExists('testme/file1.txt', 'file1.txt');
 $phpunit->assertFileNotExists('testme/symlink.txt', 'symlink.txt');
