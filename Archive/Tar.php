@@ -731,7 +731,7 @@ class Archive_Tar extends PEAR
      */
     public function setIgnoreList($list)
     {
-        $regexp = str_replace(array('#', '.', '^', '$'), array('\#', '\.', '\^', '\$'), $list);
+        $list = str_replace(array('#', '.', '^', '$'), array('\#', '\.', '\^', '\$'), $list);
         $regexp = '#/' . join('$|/', $list) . '#';
         $this->setIgnoreRegexp($regexp);
     }
