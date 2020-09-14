@@ -1273,7 +1273,7 @@ class Archive_Tar extends PEAR
             while (($v_buffer = fread($v_file, $this->buffer_length)) != '') {
                 $buffer_length = strlen("$v_buffer");
                 if ($buffer_length != $this->buffer_length) {
-                    $pack_size = ((int)($buffer_length / 512) + 1) * 512;
+                    $pack_size = ((int)($buffer_length / 512) + ($buffer_length % 512 !== 0 ? 1 : 0)) * 512;
                     $pack_format = sprintf('a%d', $pack_size);
                 } else {
                     $pack_format = sprintf('a%d', $this->buffer_length);
