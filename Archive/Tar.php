@@ -1515,8 +1515,13 @@ class Archive_Tar extends PEAR
             $userinfo = posix_getpwuid($p_uid);
             $groupinfo = posix_getgrgid($p_gid);
 
-            $v_uname = $userinfo['name'];
-            $v_gname = $groupinfo['name'];
+            if ($userinfo === false || $groupinfo === false) {
+                $v_uname = '';
+                $v_gname = '';
+            } else {
+                $v_uname = $userinfo['name'];
+                $v_gname = $groupinfo['name'];
+            }
         } else {
             $v_uname = '';
             $v_gname = '';
