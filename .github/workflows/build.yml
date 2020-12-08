@@ -31,7 +31,7 @@ jobs:
 
       - name: Install PEAR
         run: |
-          apt-get install php-pear
+          sudo apt-get install php-pear
 
       - name: Run tests
         run: |
