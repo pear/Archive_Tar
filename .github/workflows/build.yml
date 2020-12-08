@@ -35,7 +35,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pear install -f package.xml
+          sudo pear install -f package.xml
           pear version
           pear run-tests -qr tests/ || cat run-tests.log
           for i in `find tests/ -name '*.out'`; do echo "$i"; cat "$i"; done
