@@ -1397,16 +1397,20 @@ class Archive_Tar extends PEAR
 
         $v_magic = 'ustar ';
         $v_version = ' ';
+        $v_uname = '';
+        $v_gname = '';
 
         if (function_exists('posix_getpwuid')) {
             $userinfo = posix_getpwuid($v_info[4]);
             $groupinfo = posix_getgrgid($v_info[5]);
 
-            $v_uname = $userinfo['name'];
-            $v_gname = $groupinfo['name'];
-        } else {
-            $v_uname = '';
-            $v_gname = '';
+            if (isset($userinfo['name'])) {
+                $v_uname = $userinfo['name'];
+            }
+
+            if (isset($groupinfo['name'])) {
+                $v_gname = $groupinfo['name'];
+            }
         }
 
         $v_devmajor = '';
