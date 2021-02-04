@@ -2142,7 +2142,7 @@ class Archive_Tar extends PEAR
                                 $link_depth++;
                             }
                         }
-                        if (str_starts_with($v_header['link'], "/") or $link_depth <= 0) {
+                        if (strpos($v_header['link'], "/") === 0 or $link_depth <= 0) {
                             $this->_error(
                                  'Out-of-path file extraction {'
                                  . $v_header['filename'] . ' --> ' .
