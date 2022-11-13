@@ -1,3 +1,5 @@
+_NOTE_: This package is looking for a new maintainer. Are you interested? Let me know at mrook AT php DOT net.
+
 Archive_Tar
 ==========
 
