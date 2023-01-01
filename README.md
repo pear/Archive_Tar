@@ -1,4 +1,4 @@
-_NOTE_: This package is looking for a new maintainer. Are you interested? Let me know at mrook AT php DOT net.
+_NOTE_: This package is looking for a new maintainer. Are you interested? Send an e-mail to pear-dev@lists.php.net.
 
 Archive_Tar
 ==========
