@@ -1,5 +1,3 @@
-_NOTE_: This package is looking for a new maintainer. Are you interested? Send an e-mail to pear-dev@lists.php.net.
-
 Archive_Tar
 ==========
 
