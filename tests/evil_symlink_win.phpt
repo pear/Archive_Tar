@@ -17,7 +17,7 @@ echo 'tests done';
 ?>
 --CLEAN--
 <?php
-unlink(dirname(__FILE__) . '/evil_symlink_win/evil.txt');
+@unlink(dirname(__FILE__) . '/evil_symlink_win/evil.txt');
 rmdir(dirname(__FILE__) . '/evil_symlink_win');
 ?>
 --EXPECT--
