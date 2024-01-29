@@ -18,7 +18,7 @@ echo 'tests done';
 --CLEAN--
 <?php
 unlink(dirname(__FILE__) . '/one/two/secret.txt');
-unlink(dirname(__FILE__) . '/one/two/three/four/five/six/evil.txt');
+@unlink(dirname(__FILE__) . '/one/two/three/four/five/six/evil.txt');
 rmdir(dirname(__FILE__) . '/one/two/three/four/five/six');
 rmdir(dirname(__FILE__) . '/one/two/three/four/five');
 rmdir(dirname(__FILE__) . '/one/two/three/four');
