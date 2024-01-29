@@ -2115,7 +2115,7 @@ class Archive_Tar extends PEAR
                 if ($v_extract_file) {
                     if ($v_header['typeflag'] == "5") {
                         if (!@file_exists($v_header['filename'])) {
-                            if (!@mkdir($v_header['filename'], 0777)) {
+                            if (!@mkdir($v_header['filename'], 0775)) {
                                 $this->_error(
                                     'Unable to create directory {'
                                     . $v_header['filename'] . '}'
@@ -2448,7 +2448,7 @@ class Archive_Tar extends PEAR
             return false;
         }
 
-        if (!@mkdir($p_dir, 0777)) {
+        if (!@mkdir($p_dir, 0775)) {
             $this->_error("Unable to create directory '$p_dir'");
             return false;
         }
