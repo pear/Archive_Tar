@@ -4,7 +4,7 @@ tests if files > 8G are supported
 --FILE--
 <?php
 require_once dirname(__FILE__) . '/setup.php.inc';
-$tar = new Archive_Tar(dirname(__FILE__) . '/big.tar.gz');
+$tar = new Archive_Tar(dirname(__FILE__) . '/big.tar.bz2');
 $content = $tar->listContent();
 $found_big_file = false;
 foreach ($content as $item) {
