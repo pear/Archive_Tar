@@ -240,7 +240,7 @@ class Archive_Tar extends PEAR
 
 
         if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
-            $this->_fmt = "a100filename/a8mode/a8uid/a8gid/Z12size/a12mtime/" .
+            $this->_fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
                 "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
                 "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
         } else {
