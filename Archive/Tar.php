@@ -238,9 +238,17 @@ class Archive_Tar extends PEAR
             }
         }
 
-        $this->_fmt = "Z100filename/Z8mode/Z8uid/Z8gid/a12size/Z12mtime/" .
-            "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
-            "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
+
+        if (version_compare(PHP_VERSION, "5.5.0-dev") < 0) {
+            $this->_fmt = "a100filename/a8mode/a8uid/a8gid/a12size/a12mtime/" .
+                "a8checksum/a1typeflag/a100link/a6magic/a2version/" .
+                "a32uname/a32gname/a8devmajor/a8devminor/a131prefix";
+        } else {
+            $this->_fmt = "Z100filename/Z8mode/Z8uid/Z8gid/a12size/Z12mtime/" .
+                "Z8checksum/Z1typeflag/Z100link/Z6magic/Z2version/" .
+                "Z32uname/Z32gname/Z8devmajor/Z8devminor/Z131prefix";
+        }
+
 
         $this->buffer_length = $buffer_length;
     }
