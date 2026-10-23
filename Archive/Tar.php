@@ -125,6 +125,8 @@ class Archive_Tar extends PEAR
      * @param int $buffer_length Length of the read buffer in bytes
      *
      * @return bool
+     *
+     * @psalm-taint-sink file $p_tarname
      */
     public function __construct($p_tarname, $p_compress = null, $buffer_length = 512)
     {
@@ -261,6 +263,8 @@ class Archive_Tar extends PEAR
      *
      * @return bool true on success, false on error.
      * @see    createModify()
+     *
+     * @psalm-taint-sink file $p_filelist
      */
     public function create($p_filelist)
     {
@@ -282,6 +286,8 @@ class Archive_Tar extends PEAR
      * @return bool true on success, false on error.
      * @see    createModify()
      * @access public
+     *
+     * @psalm-taint-sink file $p_filelist
      */
     public function add($p_filelist)
     {
@@ -293,6 +299,8 @@ class Archive_Tar extends PEAR
      * @param bool $p_preserve
      * @param bool $p_symlinks
      * @return bool
+     *
+     * @psalm-taint-sink file $p_path
      */
     public function extract($p_path = '', $p_preserve = false, $p_symlinks = true)
     {
@@ -351,6 +359,8 @@ class Archive_Tar extends PEAR
      *
      * @return boolean true on success, false on error.
      * @see addModify()
+     *
+     * @psalm-taint-sink file $p_filelist
      */
     public function createModify($p_filelist, $p_add_dir, $p_remove_dir = '')
     {
@@ -423,6 +433,8 @@ class Archive_Tar extends PEAR
      *                             relevant.
      *
      * @return bool true on success, false on error.
+     *
+     * @psalm-taint-sink file $p_filelist
      */
     public function addModify($p_filelist, $p_add_dir, $p_remove_dir = '')
     {
@@ -541,6 +553,8 @@ class Archive_Tar extends PEAR
      *
      * @return boolean true on success, false on error.
      * @see    extractList()
+     *
+     * @psalm-taint-sink file $p_path
      */
     public function extractModify($p_path, $p_remove_path, $p_preserve = false, $p_symlinks = true)
     {
@@ -603,6 +617,8 @@ class Archive_Tar extends PEAR
      *
      * @return bool true on success, false on error.
      * @see    extractModify()
+     *
+     * @psalm-taint-sink file $p_path
      */
     public function extractList($p_filelist, $p_path = '', $p_remove_path = '', $p_preserve = false, $p_symlinks = true)
     {
