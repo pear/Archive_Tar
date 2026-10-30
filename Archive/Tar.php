@@ -1372,7 +1372,7 @@ class Archive_Tar extends PEAR
         } else {
             $v_typeflag = '0';
             clearstatcache();
-            $v_size = sprintf("%011s", DecOct($v_info['size']));
+            $v_size = $this->_sizeToTarRec($v_info['size']);
         }
 
         $v_magic = 'ustar ';
@@ -1480,7 +1480,7 @@ class Archive_Tar extends PEAR
         if ($p_type == "5") {
             $v_size = sprintf("%011s", DecOct(0));
         } else {
-            $v_size = sprintf("%011s", DecOct($p_size));
+            $v_size = $this->_sizeToTarRec($p_size);
         }
 
         $v_uid = sprintf("%07s", DecOct($p_uid));
@@ -1741,6 +1741,24 @@ class Archive_Tar extends PEAR
         */
 
         return true;
+    }
+
+    /**
+     * Convert actual size to Tar record size
+     *
+     * Sizes that do not fit in 11 octal digits are written in base-256,
+     * as GNU tar does and as _tarRecToSize() reads.
+     *
+     * @param int $size
+     * @return string 12-byte size record
+     */
+    private function _sizeToTarRec($size)
+    {
+        if ($size <= 077777777777) {
+            return sprintf("%011s", DecOct($size));
+        }
+
+        return "\x80\x00\x00\x00" . pack("J", $size);
     }
 
     /**
